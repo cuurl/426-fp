@@ -1,89 +1,87 @@
-import * as THREE from 'three';
+import * as CANNON from "cannon-es";
+import * as THREE from "three";
 
-// Scene Setup
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+/**
+ * Really basic example to show cannon.js integration
+ * with three.js.
+ * Each frame the cannon.js world is stepped forward and then
+ * the position and rotation data of the boody is copied
+ * over to the three.js scene.
+ */
 
-// Basic Cube (Player)
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const player = new THREE.Mesh(geometry, material);
-scene.add(player);
+// three.js variables
+let camera, scene, renderer;
+let mesh;
 
-// Ground
-const groundGeometry = new THREE.PlaneGeometry(100, 100);
-const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x654321 });
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-scene.add(ground);
+// cannon.js variables
+let world;
+let body;
 
-// Camera Position
-camera.position.z = 5;
-
-// Player Movement Variables
-const playerSpeed = 0.1;
-
-let moveLeft = false;
-let moveRight = false;
-let moveForward = false;
-let moveBackward = false;
-
-// Keyboard Event Listeners
-document.addEventListener('keydown', (event) => {
-    switch (event.code) {
-        case 'ArrowLeft':
-            moveLeft = true;
-            break;
-        case 'ArrowRight':
-            moveRight = true;
-            break;
-        case 'ArrowUp':
-            moveForward = true;
-            break;
-        case 'ArrowDown':
-            moveBackward = true;
-            break;
-    }
-});
-
-document.addEventListener('keyup', (event) => {
-    switch (event.code) {
-        case 'ArrowLeft':
-            moveLeft = false;
-            break;
-        case 'ArrowRight':
-            moveRight = false;
-            break;
-        case 'ArrowUp':
-            moveForward = false;
-            break;
-        case 'ArrowDown':
-            moveBackward = false;
-            break;
-    }
-});
-
-// Animation Loop
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Update Player Position Based on Input
-    if (moveLeft) player.position.x += playerSpeed;
-    if (moveRight) player.position.x -= playerSpeed;
-    if (moveForward) player.position.z += playerSpeed; // Move forward
-    if (moveBackward) player.position.z -= playerSpeed; // Move backward
-
-    renderer.render(scene, camera);
-}
-
+initThree();
+initCannon();
 animate();
 
-// Handle Window Resize
-window.addEventListener('resize', () => {
+function initThree() {
+    // Camera
+    camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        1,
+    );
+    camera.position.z = 5;
+
+    // Scene
+    scene = new THREE.Scene();
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.body.appendChild(renderer.domElement);
+
+    window.addEventListener("resize", onWindowResize);
+
+    // Box
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: true,
+    });
+
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+}
+
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
+
+function initCannon() {
+    world = new CANNON.World();
+
+    // Box
+    const shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
+    body = new CANNON.Body({
+        mass: 1,
+    });
+    body.addShape(shape);
+    body.angularVelocity.set(0, 10, 0);
+    body.angularDamping = 0.5;
+    world.addBody(body);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    // Step the physics world
+    world.fixedStep();
+
+    // Copy coordinates from cannon.js to three.js
+    mesh.position.copy(body.position);
+    mesh.quaternion.copy(body.quaternion);
+
+    // Render three.js
+    renderer.render(scene, camera);
+}
