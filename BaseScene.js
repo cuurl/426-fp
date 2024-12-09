@@ -3,8 +3,9 @@ import * as THREE from "three";
 
 import { GUI } from "dat.gui";
 
-import Player from "../testing/Player";
-import GroundTrack from "../testing/GroundTrack";
+import Player from "./Player";
+import GroundTrack from "./GroundTrack";
+import ObstacleManager from "./ObstacleManager";
 
 class BaseScene {
     constructor() {
@@ -43,7 +44,17 @@ class BaseScene {
         (this.playerSpeed = 0.5),
             (this.playerDirection = new THREE.Vector3(1, 0, 0));
 
+        // change 12/08 td
+        // this.obstacle = new Obstacle({
+        //     x: this.floor.pHelper.xRadius, 
+        //     y: -13.9,
+        //     z: 0
+        // });
+
+
+
         this.scene.add(this.player.mesh); // THREE.Scene.add(<Mesh>)
+        // this.scene.add(this.obstacle.mesh);
 
         const cameraFromPlayer = new THREE.Vector3(0, 0, 0);
         const playerPosition = new THREE.Vector3();
@@ -58,6 +69,33 @@ class BaseScene {
         this.world.gravity.set(0, -9.81, 0);
         this.world.addBody(this.floor.body);
         this.world.addBody(this.player.body);
+        //this.world.addBody(this.obstacle.body);
+
+        console.log("BaseScene: Initializing ObstacleManager");
+
+        const playerMat = new CANNON.Material('player');
+        const obstacleMat = new CANNON.Material('obstacle');
+
+        const contactMaterial = new CANNON.ContactMaterial(
+            playerMat,
+            obstacleMat,
+            {
+                friction: 0.0,
+                restitution: 0.3
+            }
+        );
+
+        this.world.addContactMaterial(contactMaterial);
+        this.player.body.material = playerMat;
+        //this.obstacle.body.material = obstacleMat;
+
+        this.obstacleManager = new ObstacleManager(
+            this.player,
+            this.scene,
+            this.world,
+            this.floor.pHelper.xRadius,
+            obstacleMat  // Pass the material to the manager
+        );
 
         this.playerStartingPosition = this.floor.trackStartingPoint;
         this.player.mesh.position.set(
@@ -125,7 +163,7 @@ class BaseScene {
         requestAnimationFrame(this.animate);
 
         this.t += this.simulationStepSize;
-        console.log(this.t);
+        //console.log(this.t);
 
         const x = this.floor.pHelper.xRadius * Math.cos(this.t),
             y = -13.9,
@@ -133,6 +171,9 @@ class BaseScene {
 
         this.player.body.position.set(x, y, -z);
         this.player.mesh.position.set(x, y, -z);
+
+        const playerAngle = Math.atan2(-this.player.body.position.z, this.player.body.position.x);
+        this.obstacleManager.update(playerAngle);
 
         // move camera with player
         const cameraFromPlayer = new THREE.Vector3(30, 20, 0);
