@@ -1,13 +1,7 @@
 import Obstacle from "./Obstacle";
+import Enemy from "./Enemy";
 
 export default class ObstacleManager {
-
-    /**
-     * Create a global manager for abstract Obstacle objects in the scene;
-     * responsible for obstacle spawning and player-to-obstacle collision 
-     * handling.
-     */
-
     constructor(player, scene, world, trackRadius, obstacleMaterial) {
         this.player = player;
         this.scene = scene;
@@ -16,7 +10,7 @@ export default class ObstacleManager {
         this.obstacleMaterial = obstacleMaterial;
         this.obstacles = [];
         this.minSpacing = Math.PI / 4;
-        this.maxObstacles = 16;
+        this.maxObstacles = 8;
         this.lastSpawnAngle = 0;
 
         this.lastSpawnTime = 0;
@@ -28,7 +22,13 @@ export default class ObstacleManager {
 
         this.maxLateralOffset = 60; // make sure this is less than track radius
         this.minForwardAngle = Math.PI / 4; // objects can only spawn at least 45 degrees in front of player
-        this.maxForwardAngle = Math.PI;
+        this.maxForwardAngle = Math.PI
+
+        // Add obstacle type weights for spawning
+        this.obstacleTypes = [
+            { type: Obstacle, weight: 0.8 },
+            { type: Enemy, weight: 0.2 }
+        ];
     }
 
     // normalize angle to be between -PI and PI
@@ -65,48 +65,56 @@ export default class ObstacleManager {
         return { x: finalX, y: -13.9, z: -finalZ };
     }
 
+    // Helper method to select obstacle type based on weights
+    selectObstacleType() {
+        const totalWeight = this.obstacleTypes.reduce((sum, type) => sum + type.weight, 0);
+        let random = Math.random() * totalWeight;
+        
+        for (const obstacleType of this.obstacleTypes) {
+            if (random < obstacleType.weight) {
+                return obstacleType.type;
+            }
+            random -= obstacleType.weight;
+        }
+        
+        return Obstacle; // Default fallback
+    }
+
     spawnObstacle() {
         const currentTime = Date.now();
-
+        
         // check conditions for spawn
-        if (
-            this.obstacles.length >= this.maxObstacles ||
-            !this.canSpawnObstacle(currentTime)
-        ) {
+        if (this.obstacles.length >= this.maxObstacles || !this.canSpawnObstacle(currentTime)) {
             return;
         }
 
         // const angle = this.lastSpawnAngle + this.minSpacing;
         // calculate position of next object to be spawned relative to player
-        const playerAngle = Math.atan2(
-            -this.player.body.position.z,
-            this.player.body.position.x
-        );
-        const offset =
-            this.minForwardAngle +
-            Math.random() * (this.maxForwardAngle - this.minForwardAngle);
+        const playerAngle = Math.atan2(-this.player.body.position.z, this.player.body.position.x);
+        const offset = this.minForwardAngle + Math.random() * (this.maxForwardAngle - this.minForwardAngle);
         const spawnAngle = this.normalizeAngle(playerAngle + offset);
         const position = this.calculateSpawnPosition(spawnAngle);
 
-        const obstacle = new Obstacle(position);
+        // Select and create obstacle type
+        const ObstacleType = this.selectObstacleType();
+        const obstacle = new ObstacleType(position);
         obstacle.body.material = this.obstacleMaterial;
+        
+        // const obstacle = new Obstacle(position);
+        // obstacle.body.material = this.obstacleMaterial;
 
         // collision handling
         obstacle.body.addEventListener("collide", (event) => {
             const currentTime = Date.now();
-
+            
             // prevents collision spam
             if (currentTime < this.globalCollisionCooldown) {
                 return;
             }
 
-            if (
-                !obstacle.isColliding &&
-                obstacle.handleCollision(currentTime)
-            ) {
+            if (!obstacle.isColliding && obstacle.handleCollision(currentTime)) {
                 console.log("Collision detected! Removing obstacle...");
-                this.globalCollisionCooldown =
-                    currentTime + this.globalCollisionCooldownDuration;
+                this.globalCollisionCooldown = currentTime + this.globalCollisionCooldownDuration;
             }
         });
 
@@ -121,51 +129,60 @@ export default class ObstacleManager {
         this.lastSpawnAngle = spawnAngle;
         this.lastSpawnTime = currentTime;
 
-        console.log(
-            "Spawned obstacle at position: x: " +
-                position.x +
-                " z: " +
-                position.z
-        );
+        console.log("Spawned obstacle at position: x: " + position.x + " z: " + position.z);
     }
 
-    update(playerAngle) {
-        // obstacle removing filter
-        this.obstacles = this.obstacles.filter(({ obstacle, angle }) => {
-            // remove collided obstacles
+    update(playerAngle, playerPosition) {
+        this.obstacles = this.obstacles.filter(({obstacle, angle}) => {
             if (obstacle.shouldBeRemoved) {
-                console.log("Removing obstacle from scene and world");
-                this.scene.remove(obstacle.mesh);
-                this.world.removeBody(obstacle.body);
+                if (obstacle instanceof Enemy) {
+                    obstacle.cleanup(this.scene, this.world);
+                } else {
+                    this.scene.remove(obstacle.mesh);
+                    this.world.removeBody(obstacle.body);
+                }
                 return false;
             }
 
-            // calculate relative angle between player and obstacle
+            // Calculate relative angle between player and obstacle
             let relativeAngle = this.normalizeAngle(playerAngle - angle);
-
-            // remove obstacles that are behind removal threshold angle
+            
+            // Only remove if obstacle is behind player by more than threshold
+            // and accounting for angle wrapping
             if (relativeAngle > this.removalThreshold) {
-                console.log("Removing obstacle - just behind player");
-                this.scene.remove(obstacle.mesh);
-                this.world.removeBody(obstacle.body);
+                console.log("Removing obstacle at angle:", relativeAngle);
+                if (obstacle instanceof Enemy) {
+                    obstacle.cleanup(this.scene, this.world);
+                } else {
+                    this.scene.remove(obstacle.mesh);
+                    this.world.removeBody(obstacle.body);
+                }
                 return false;
+            }
+
+            // Update shooting obstacles
+            if (obstacle instanceof Enemy) {
+                obstacle.update(playerPosition, this.scene, this.world, 1/60);
             }
 
             return true;
         });
 
-        // try to spawn new obstacles
-        if (Math.random() < 0.1) {
-            // 2% chance each update
+        // Try to spawn new obstacles
+        if (Math.random() < 0.10) {
             this.spawnObstacle();
         }
     }
 
     // remove all obstacles
     clear() {
-        this.obstacles.forEach(({ obstacle }) => {
-            this.scene.remove(obstacle.mesh);
-            this.world.removeBody(obstacle.body);
+        this.obstacles.forEach(({obstacle}) => {
+            if (obstacle instanceof Enemy) {
+                obstacle.cleanup(this.scene, this.world);
+            } else {
+                this.scene.remove(obstacle.mesh);
+                this.world.removeBody(obstacle.body);
+            }
         });
         this.obstacles = [];
         this.lastSpawnAngle = 0;
