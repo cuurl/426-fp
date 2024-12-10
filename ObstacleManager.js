@@ -155,7 +155,7 @@ export default class ObstacleManager {
         });
 
         // try to spawn new obstacles
-        if (Math.random() < 1) {
+        if (Math.random() < 0.1) {
             // 2% chance each update
             this.spawnObstacle();
         }
