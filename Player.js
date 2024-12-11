@@ -1,89 +1,88 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
-import randRanged from "./util";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
-// makes mesh and body attributes public, so we can access them in BaseScene
-// when adding the Player to the scene, but while avoiding extra bloat in
-// its constructor
+import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
+import { DEFAULT_PLAYER_MODEL_INDEX } from "./util";
+
 export default class Player {
-    constructor() {
-        // three.js-related initializations
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0x156289,
-            emissive: 0x072534,
-        });
+    currentModelIndex = DEFAULT_PLAYER_MODEL_INDEX;
+    possibleModels = PLAYER_MODELS;
 
-        this.mesh = new THREE.Mesh(geometry, material);
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Creates, renders, and physically instantiates the Player in the provided scene.
+     */
+
+    constructor(scene) {
+        this.loader = new FBXLoader();
+
+        this.initialMeshScale = new THREE.Vector3(1, 1, 1);
+        this.initialMeshScaleFactor = 0.01;
+        
+        this.meshScale = new THREE.Vector3(1, 1, 1);
+        this.meshScaleFactor = 0.01;
+
+        const modelFilename = this.possibleModels[this.currentModelIndex];
+        const modelPath = `${PLAYER_MODELS_F_NAME_PREFIX}${modelFilename}`;
+
+        this.loader.load(
+            modelPath,
+            (modelMesh) => {
+                modelMesh.scale.copy(this.initialMeshScale.clone().multiplyScalar(this.initialMeshScaleFactor));
+                scene.add(modelMesh);
+
+                this.mesh = modelMesh;
+            },
+
+            undefined,
+
+            (err) => {
+                console.log(err);
+            }
+        );
 
         // cannon.js-related initializations
         this.shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
         this.body = new CANNON.Body({
             mass: 1,
-            type: CANNON.BODY_TYPES.DYNAMIC
+            type: CANNON.BODY_TYPES.DYNAMIC,
         });
 
         this.body.addShape(this.shape);
-        /*this.body.angularVelocity.set(0, 10, 0);
-        this.body.angularDamping = 0.5;*/
-
-        this.moveLeft = false;
-        this.moveRight = false;
-        this.moveForward = false;
-        this.moveBackward = false;
     }
+    /* ---------------------------------------------------------------------------- */
 
-    // Returns a random point on the player for debugging purposes.
-    randomPoint() {
-        const {lowerBound, upperBound} = this.body.aabb;
+    /**
+     * Loads, initializes, and properly scales the desired player model, where player
+     * model choice is designated by Player.currentModelIndex.
+     */
 
-        const xMin = lowerBound.x,
-            xMax = upperBound.x,
-            yMin = lowerBound.y,
-            yMax = upperBound.y,
-            zMin = lowerBound.z,
-            zMax = upperBound.z;
-
-        // Select a random face of the cube
-        const faceIndex = Math.floor(Math.random() * 6);
-        let x, y, z;
-
-        switch (faceIndex) {
-            case 0: // Front face (z = zMax)
-                x = randRanged(xMin, xMax);
-                y = randRanged(yMin, yMax);
-                z = zMax;
-                break;
-            case 1: // Back face (z = zMin)
-                x = randRanged(xMin, xMax);
-                y = randRanged(yMin, yMax);
-                z = zMin;
-                break;
-            case 2: // Left face (x = xMin)
-                x = xMin;
-                y = randRanged(yMin, yMax);
-                z = randRanged(zMin, zMax);
-                break;
-            case 3: // Right face (x = xMax)
-                x = xMax;
-                y = randRanged(yMin, yMax);
-                z = randRanged(zMin, zMax);
-                break;
-            case 4: // Top face (y = yMax)
-                x = randRanged(xMin, xMax);
-                y = yMax;
-                z = randRanged(zMin, zMax);
-                break;
-            case 5: // Bottom face (y = yMin)
-                x = randRanged(xMin, xMax);
-                y = yMin;
-                z = randRanged(zMin, zMax);
-                break;
-            default:
-                throw new Error("Invalid face index");
+    chooseModel(scene) {
+        // if there was already a player model b4 changing, get rid of
+        if (this.mesh) {
+            scene.remove(this.mesh);
         }
 
-        return new CANNON.Vec3(x, y, z);
+        const modelFilename = this.possibleModels[this.currentModelIndex];
+        const modelPath = `${PLAYER_MODELS_F_NAME_PREFIX}${modelFilename}`;
+
+        this.loader.load(modelPath, (modelMesh) => {
+            modelMesh.scale.set(this.initialMeshScale.clone().multiplyScalar(this.initialMeshScaleFactor));
+            scene.add(modelMesh);
+
+            this.mesh = modelMesh;
+        });
     }
+
+    /* ---------------------------------------------------------------------------- */
+
+    // Returns the player's position in world coordinates.
+    worldPosition() {
+        return this.mesh.position;
+    }
+
+    /* ---------------------------------------------------------------------------- */
 }

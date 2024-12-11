@@ -1,41 +1,45 @@
 import * as CANNON from 'cannon-es';
 import * as THREE  from 'three';
+import { INITIAL_LANE_IDX, INITIAL_LANE_RAD, LARGE_LANE_RAD, SMALL_LANE_RAD, TRACK_BASE_Y_POS, TRACK_RAD } from './util';
 
 export default class GroundTrack {
     constructor() {
         // three
-        const plane = new THREE.Plane(
-            new THREE.Vector3(0, -1, 0),
-            -10
-        )
-
-        const p = new THREE.CircleGeometry(100, 100);
+        const p = new THREE.CircleGeometry(TRACK_RAD, TRACK_RAD);
         const pMat = new THREE.MeshBasicMaterial({color: 0x5e5e5e, side: THREE.DoubleSide} );
-        this.pPlane = new THREE.Mesh(p, pMat);
-        this.pPlane.rotation.set(Math.PI / 2, 0, 0);
+        this.basePlane = new THREE.Mesh(p, pMat);
+        this.basePlane.rotation.set(Math.PI / 2, 0, 0);
 
-        this.pPlane.position.set(0,-15,0);
+        this.basePlane.position.set(0, TRACK_BASE_Y_POS, 0);
+
+        this.basePlane.visible = false;
 
         // cannon
         const material = new CANNON.Material('ground')
-        const shape = new CANNON.Box(new CANNON.Vec3(100, 100, 0.1))
+        const shape = new CANNON.Cylinder(100,100,1)
 
         this.body = new CANNON.Body({ mass: 0, material: material, type: CANNON.BODY_TYPES.STATIC})
-        this.body.position.set(0, -15, 0);
+        this.body.position.set(0, TRACK_BASE_Y_POS, 0);
 
         this.body.addShape(shape)
         this.body.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
 
-        // three & cannon for a "helper" circle that denotes the track the player will move on
-        // (subject to perturbation in left-right directions)
-        this.pHelper = new THREE.EllipseCurve(0, 0, 75, 75);
-        const pHelperGeometry = new THREE.BufferGeometry().setFromPoints(this.pHelper.getPoints(50)),
-              pHelperMaterial = new THREE.LineBasicMaterial({color: 0xc20a00});
-        
-        this.pHelperCurve = new THREE.Line(pHelperGeometry, pHelperMaterial);
-        this.pHelperCurve.rotation.set(-Math.PI/2,0,0);
-        this.pHelperCurve.position.set(0, -14.99, 0);
+        this.validLanes = [];
 
-        this.trackStartingPoint = this.pHelper.getPoint(1);
+        // inner path
+        this.validLanes.push(
+            new THREE.EllipseCurve(0, 0, SMALL_LANE_RAD, SMALL_LANE_RAD)
+        );
+
+        // default path
+        this.validLanes.push(
+            new THREE.EllipseCurve(0, 0, INITIAL_LANE_RAD, INITIAL_LANE_RAD)
+        );
+
+        this.validLanes.push(
+            new THREE.EllipseCurve(0, 0, LARGE_LANE_RAD, LARGE_LANE_RAD)
+        );
+
+        this.trackStartingPoint = this.validLanes[0].getPoint(0);
     }
 }

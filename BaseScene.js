@@ -2,176 +2,366 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
 import { GUI } from "dat.gui";
+import {
+    NUM_LANE_SAMPLES,
+    INITIAL_LANE_IDX,
+    orientCameraTowardsPlayer,
+    GRAVITY,
+    TRACK_LANE_Y_POS,
+    CAMERA_OFFSET,
+} from "./util";
 
-import Player from "../testing/Player";
-import GroundTrack from "../testing/GroundTrack";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { BloomPass } from "three/addons/postprocessing/BloomPass.js";
+
+import { LuminosityShader } from "three/addons/shaders/LuminosityShader.js";
+import { SobelOperatorShader } from "three/addons/shaders/SobelOperatorShader.js";
+
+import { TTFLoader } from "three/addons/loaders/TTFLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
+import Player from "./Player";
+import GroundTrack from "./GroundTrack";
+import ObstacleManager from "./ObstacleManager";
+
 
 class BaseScene {
+    /* ---------------------------------------------------------------------------- */
+    // THREE.js related declarations
+    renderer = null;
+    scene = null;
+    camera = null;
+    lights = [];
+
+    tanFOV = null; // see threeInit() - important for window resizing
+    initialWindowHeight = null; // (same as above)
+
+    composer = null; // post-processing
+    /* ---------------------------------------------------------------------------- */
+    // cannon.js related declarations (+ general collision handling)
+    world = null;
+    obstacleManager = null;
+    /* ---------------------------------------------------------------------------- */
+    // core game logic declarations
+    lanes = [];
+    currentLane = null; // which lane is the player currently moving on?
+    currentLaneIndex = INITIAL_LANE_IDX;
+    t = 0.001;
+    tStep = 0.001;
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Sets up required bindings, & initializes THREE.js + Cannon.js primitives,
+     * event handlers for user input, and various utility tools.
+     */
+
     constructor() {
-        this.t = 0.001;
-        this.simulationStepSize = 0.001;
-        
-        // threeJS-related initializations
-        this.camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            1,
-            2000
-        );
+        this.threeInit(); // threeJS-related initializations & lane logic setup
 
-        this.scene = new THREE.Scene();
+        this.player = new Player(this.scene);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(this.renderer.domElement);
-
-        window.addEventListener("resize", (e) => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-        this.scene.add(light);
-
-        this.floor = new GroundTrack();
-        this.scene.add(this.floor.pPlane);
-        this.scene.add(this.floor.pHelperCurve);
-
-        this.player = new Player();
-        (this.playerSpeed = 0.5),
-            (this.playerDirection = new THREE.Vector3(1, 0, 0));
-
-        this.scene.add(this.player.mesh); // THREE.Scene.add(<Mesh>)
-
-        const cameraFromPlayer = new THREE.Vector3(0, 0, 0);
-        const playerPosition = new THREE.Vector3();
-
-        this.player.mesh.getWorldPosition(playerPosition);
-
-        this.camera.position.copy(playerPosition).add(cameraFromPlayer);
-        this.camera.lookAt(playerPosition);
-
-        // cannon.js-related initializations
-        this.world = new CANNON.World();
-        this.world.gravity.set(0, -9.81, 0);
-        this.world.addBody(this.floor.body);
-        this.world.addBody(this.player.body);
-
-        this.playerStartingPosition = this.floor.trackStartingPoint;
-        this.player.mesh.position.set(
-            this.floor.pHelper.xRadius,
-            -13.5,
-            this.floor.pHelper.yRadius
-        );
-        this.player.body.position.set(
-            this.floor.pHelper.xRadius,
-            -13.5,
-            this.floor.pHelper.yRadius
-        );
+        this.cannonInit(); // cannonJS-related initializations (for physics)
+        this.inputInit(); // player event listeners
+        this.utilInit(); // DAT GUI, for debugging
 
         // https://stackoverflow.com/questions/4011793/this-is-undefined-in-javascript-class-methods
         this.animate = this.animate.bind(this);
+    }
 
-        // player event listeners
-        document.addEventListener("keydown", (event) => {
-            switch (event.code) {
-                case "ArrowLeft":
-                    this.player.moveLeft = true;
-                    break;
-                case "ArrowRight":
-                    this.player.moveRight = true;
-                    break;
-                case "ArrowUp":
-                    this.player.moveForward = true;
-                    break;
-                case "ArrowDown":
-                    this.player.moveBackward = true;
-                    break;
-            }
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Performs standard THREE.js initializations - sets up the scene,
+     * camera, renderer; and renders necessary primitives (lights, the
+     * floor/track object, playable lanes, etc.).
+     *
+     * If visibleLanes is set to True, the lanes on the track that the
+     * player can move between will be explicitly drawn out (mainly for
+     * debugging purposes).
+     */
+    threeInit(visibleLanes = true) {
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(
+            90,
+            window.innerWidth / window.innerHeight,
+            1,
+            30000
+        );
+
+        document.body.appendChild(this.renderer.domElement);
+
+        this.tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov) / 2);
+        this.initialWindowHeight = window.innerHeight;
+
+        // handle fixing camera & renderer if client resizes their browser window
+        // https://jsfiddle.net/Q4Jpu/ (from official THREE docs)
+        window.addEventListener("resize", (e) => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+
+            this.camera.fov =
+                (360 / Math.PI) *
+                Math.atan(
+                    this.tanFOV *
+                        (window.innerHeight / this.initialWindowHeight)
+                );
+
+            this.camera.updateProjectionMatrix();
+            this.camera.lookAt(this.scene.position);
+
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.render(this.scene, this.camera);
         });
 
-        document.addEventListener("keyup", (event) => {
-            switch (event.code) {
-                case "ArrowLeft":
-                    this.player.moveLeft = false;
-                    break;
-                case "ArrowRight":
-                    this.player.moveRight = false;
-                    break;
-                case "ArrowUp":
-                    this.player.moveForward = false;
-                    break;
-                case "ArrowDown":
-                    this.player.moveBackward = false;
-                    break;
-            }
-        });
+        const hemiLight = new THREE.HemisphereLight(0xffffbb, 0xffffff, 2);
 
-        // DAT GUI, for debugging
+        this.lights.push(hemiLight);
+        this.scene.add(hemiLight);
+        this.scene.add(new THREE.HemisphereLightHelper(hemiLight));
+
+        this.floor = new GroundTrack();
+        this.scene.add(this.floor.basePlane);
+
+        // lane setups
+        this.lanes = this.floor.validLanes;
+        for (const lanePath of this.lanes) {
+            const points = lanePath.getPoints(NUM_LANE_SAMPLES);
+            const laneGeometry = new THREE.BufferGeometry().setFromPoints(
+                points
+            );
+            const laneMaterial = new THREE.LineBasicMaterial({
+                color: 0xff0000,
+            });
+
+            const lane = new THREE.Line(laneGeometry, laneMaterial);
+
+            lane.rotateX(-Math.PI / 2);
+            lane.position.set(0, TRACK_LANE_Y_POS, 0);
+
+            lane.visible = visibleLanes;
+
+            this.scene.add(lane);
+        }
+
+        // initially, player is placed on the middle lane
+        this.currentLane = this.lanes[INITIAL_LANE_IDX];
+
+        // post-processing
+        this.composer = new EffectComposer(this.renderer);
+
+        const renderPass = new RenderPixelatedPass(3, this.scene, this.camera);
+
+        this.composer.addPass(renderPass);
+    }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Same as above, but for Cannon - sets up a World for adding rigid bodies,
+     * adds rigid bodies for the primitives we've gotten ready to render to
+     * the screen already, so that these objects can physically interact, and
+     * intitializes an ObstacleManager to actively handle player-to-obstacle
+     * collisions (w/ Cannon logic) in the background.
+     */
+    cannonInit() {
+        // create World & add rigid bodies for applicable meshes
+        this.world = new CANNON.World({ gravity: GRAVITY });
+
+        this.world.addBody(this.floor.body);
+        this.world.addBody(this.player.body);
+
+        // player-to-obstacle collisions
+        console.log("BaseScene: Initializing ObstacleManager");
+        const playerMaterial = new CANNON.Material("player"),
+            obstacleMaterial = new CANNON.Material("obstacle");
+        const contactMaterial = new CANNON.ContactMaterial(
+            playerMaterial,
+            obstacleMaterial,
+            {
+                friction: 0.0,
+                restitution: 0.3,
+            }
+        );
+
+        this.world.addContactMaterial(contactMaterial); // mat -> material (for consistent naming scheme)
+        this.player.body.material = playerMaterial;
+
+        this.obstacleManager = new ObstacleManager(
+            this.player,
+            this.scene,
+            this.world,
+            this.currentLane.xRadius,
+            obstacleMaterial
+        );
+    }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Sets up primitives for debugging; for now, just DAT-Gui, to
+     * allow more granular control of the scene parameters and internal
+     * game logic.
+     */
+    utilInit() {
         this.gui = new GUI();
 
         const tuningFolder = this.gui.addFolder("Tuning");
-        tuningFolder.add(this, "simulationStepSize", 0, 1, 0.001);
+        tuningFolder.add(this, "tStep", 0, 1, 0.001);
         tuningFolder.open();
 
         const playerFolder = this.gui.addFolder("Player");
-        playerFolder.addColor(this.player.mesh.material, "color");
 
+        playerFolder.add(CAMERA_OFFSET, "x", -100, 100, 1);
+        playerFolder.add(CAMERA_OFFSET, "y", -100, 100, 1);
+        playerFolder.add(CAMERA_OFFSET, "z", -100, 100, 1);
+
+        playerFolder
+            .add(this.player, "currentModelIndex", [0, 1, 2, 3])
+            .name("Player model")
+            .onChange((modelIndex) => {
+                this.player.currentModelIndex = modelIndex;
+                this.player.chooseModel(this.scene);
+            });
+        /*
+        playerFolder.add(this.player.meshScale, 'x', 0.01, 2)
+            .name('Scale (x)')
+            .onChange(() => {
+                this.player.mesh.scale.copy(this.player.meshScale)
+            });
+
+        playerFolder.add(this.player.meshScale, 'y', 0.01, 2)
+            .name('Scale (y)')
+            .onChange(() => {
+                this.player.mesh.scale.copy(this.player.meshScale)
+            });     
+
+        playerFolder.add(this.player.meshScale, 'z', 0.01, 2)
+            .name('Scale (z)')
+            .onChange(() => {
+                this.player.mesh.scale.copy(this.player.meshScale)
+            });
+        */
+
+        playerFolder
+            .add(this.player, "meshScaleFactor", 0.01, 2)
+            .name("Full scale")
+            .onChange(() => {
+                this.player.meshScale.multiplyScalar(
+                    this.player.meshScaleFactor
+                );
+                this.player.mesh.scale.copy(this.player.meshScale);
+            });
+
+        const graphicsFolder = this.gui.addFolder("Graphics");
+
+        graphicsFolder.add(this.renderer, "toneMapping", {
+            No: THREE.NoToneMapping,
+            Linear: THREE.LinearToneMapping,
+            Reinhard: THREE.ReinhardToneMapping,
+            Cineon: THREE.CineonToneMapping,
+            ACESFilmic: THREE.ACESFilmicToneMapping,
+        });
+
+        graphicsFolder.add(this.renderer, "toneMappingExposure", 0, 10, 0.001);
+
+        const cameraFolder = this.gui.addFolder("Camera");
+        cameraFolder.add(this.camera.position, "x", -1000, 1000, 1);
+        cameraFolder.add(this.camera.position, "y", -1000, 1000, 1);
+        cameraFolder.add(this.camera.position, "z", -1000, 1000, 1);
     }
 
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Sets up event listeners for allowing players to switch between lanes.
+     */
+    inputInit() {
+        document.addEventListener("keydown", (event) => {
+            switch (event.code) {
+                case "ArrowLeft":
+                    this.currentLaneIndex++;
+                    this.currentLaneIndex = Math.min(
+                        this.currentLaneIndex,
+                        this.floor.validLanes.length - 1
+                    );
+                    this.currentLane =
+                        this.floor.validLanes[this.currentLaneIndex];
+                    break;
+
+                case "ArrowRight":
+                    this.currentLaneIndex--;
+                    this.currentLaneIndex = Math.max(this.currentLaneIndex, 0);
+                    this.currentLane =
+                        this.floor.validLanes[this.currentLaneIndex];
+                    break;
+            }
+        });
+    }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Updates core game simulation by a frame: advances the player's current
+     * forward position w.r.t. the path that they are currently on; moves the
+     * player to their desired path if they invoked a path change (via left/
+     * right arrow key); re-orients both the player and the camera, and renders
+     * the result as the next frame.
+     */
     animate() {
         requestAnimationFrame(this.animate);
 
-        this.t += this.simulationStepSize;
-        console.log(this.t);
-
-        const x = this.floor.pHelper.xRadius * Math.cos(this.t),
-            y = -13.9,
-            z = this.floor.pHelper.yRadius * Math.sin(this.t);
-
-        this.player.body.position.set(x, y, -z);
-        this.player.mesh.position.set(x, y, -z);
-
-        // move camera with player
-        const cameraFromPlayer = new THREE.Vector3(30, 20, 0);
-        const playerPosition = new THREE.Vector3();
-
-        this.player.mesh.getWorldPosition(playerPosition);
-
-        this.camera.position.copy(playerPosition).add(cameraFromPlayer);
-        this.camera.lookAt(new THREE.Vector3(x, y, -z));
-
-        this.player.mesh.lookAt(cameraFromPlayer.clone().negate());
-
-        // player movements that need to b handled?
-        if (this.player.moveLeft) {
-            const point = this.player.randomPoint();
-            this.player.body.applyImpulse(new CANNON.Vec3(-1, 0, 0), point);
-        }
-        if (this.player.moveRight) {
-            const point = this.player.randomPoint();
-            this.player.body.applyImpulse(new CANNON.Vec3(+1, 0, 0), point);
-        }
-        if (this.player.moveForward) {
-            const point = this.player.randomPoint();
-            this.player.body.applyImpulse(new CANNON.Vec3(0, 0, -1), point);
-        }
-        if (this.player.moveBackward) {
-            const point = this.player.randomPoint();
-            this.player.body.applyImpulse(new CANNON.Vec3(0, 0, +1), point);
+        this.t += this.tStep;
+        if (this.t >= 1) {
+            this.t = 0.001;
         }
 
-        // Step the physics world
+        // get next expected pos'n along correct path, and curr pos'n of player
+        const currPlayerPos = this.player.worldPosition(),
+            nextPosOnPath = this.currentLane.getPointAt(this.t);
+
+        const x = nextPosOnPath.x,
+            y = nextPosOnPath.y,
+            z = currPlayerPos.z;
+
+        this.player.mesh.position.lerp(new THREE.Vector3(x, -13.5, -y), 0.1);
+
+        // correctly orient the player w.r.t. the path
+        const orient = new THREE.Vector3()
+            .subVectors(new THREE.Vector3(x, y, z), currPlayerPos)
+            .normalize();
+
+        this.player.mesh.lookAt(orient);
+
+        // camera positioning
+        orientCameraTowardsPlayer(this.camera, this.player);
+
+        // three -> cannon
+        this.player.body.position.copy(this.player.mesh.position);
+        this.player.body.quaternion.copy(this.player.mesh.quaternion);
+
+        // advance physics simulation
         this.world.fixedStep();
 
-        // Copy coordinates from cannon.js to three.js
-        this.player.mesh.position.copy(this.player.body.position);
-        this.player.mesh.quaternion.copy(this.player.body.quaternion);
+        // TODO perhaps this would be better served to be moved directly into
+        //      ObstacleManager? i think that isolating the angle computation
+        //      logic to the manager class would be nice, since angles are
+        //      otherwise not referenced in BaseScene so far;
+        //      - e.g.) update(playerAngle) => update(currPlayerPosition),
+        //              and in update, calculate angle from pos'n directly.
+        const playerAngle = Math.atan2(-currPlayerPos.z, currPlayerPos.x);
+        this.obstacleManager.update(playerAngle, this.player.body.position);
 
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render();
     }
+
+    /* ---------------------------------------------------------------------------- */
 }
 
 const scene = new BaseScene();
