@@ -12,22 +12,11 @@ import {
 } from "./util";
 
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { BloomPass } from "three/addons/postprocessing/BloomPass.js";
-
-import { LuminosityShader } from "three/addons/shaders/LuminosityShader.js";
-import { SobelOperatorShader } from "three/addons/shaders/SobelOperatorShader.js";
-
-import { TTFLoader } from "three/addons/loaders/TTFLoader.js";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
 import Player from "./Player";
 import GroundTrack from "./GroundTrack";
 import ObstacleManager from "./ObstacleManager";
-
 
 class BaseScene {
     /* ---------------------------------------------------------------------------- */
@@ -91,7 +80,6 @@ class BaseScene {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(
             90,
-            90,
             window.innerWidth / window.innerHeight,
             1,
             30000
@@ -99,11 +87,6 @@ class BaseScene {
 
         document.body.appendChild(this.renderer.domElement);
 
-        this.tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov) / 2);
-        this.initialWindowHeight = window.innerHeight;
-
-        // handle fixing camera & renderer if client resizes their browser window
-        // https://jsfiddle.net/Q4Jpu/ (from official THREE docs)
         this.tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov) / 2);
         this.initialWindowHeight = window.innerHeight;
 
@@ -119,21 +102,11 @@ class BaseScene {
                         (window.innerHeight / this.initialWindowHeight)
                 );
 
-
-            this.camera.fov =
-                (360 / Math.PI) *
-                Math.atan(
-                    this.tanFOV *
-                        (window.innerHeight / this.initialWindowHeight)
-                );
-
             this.camera.updateProjectionMatrix();
-            this.camera.lookAt(this.scene.position);
 
             this.camera.lookAt(this.scene.position);
 
             this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.render(this.scene, this.camera);
             this.renderer.render(this.scene, this.camera);
         });
 
@@ -310,20 +283,9 @@ class BaseScene {
                     );
                     this.currentLane =
                         this.floor.validLanes[this.currentLaneIndex];
-                    this.currentLaneIndex++;
-                    this.currentLaneIndex = Math.min(
-                        this.currentLaneIndex,
-                        this.floor.validLanes.length - 1
-                    );
-                    this.currentLane =
-                        this.floor.validLanes[this.currentLaneIndex];
                     break;
 
                 case "ArrowRight":
-                    this.currentLaneIndex--;
-                    this.currentLaneIndex = Math.max(this.currentLaneIndex, 0);
-                    this.currentLane =
-                        this.floor.validLanes[this.currentLaneIndex];
                     this.currentLaneIndex--;
                     this.currentLaneIndex = Math.max(this.currentLaneIndex, 0);
                     this.currentLane =
@@ -375,14 +337,11 @@ class BaseScene {
         this.player.body.quaternion.copy(this.player.mesh.quaternion);
 
         // advance physics simulation
-        this.player.mesh.position.lerp(new THREE.Vector3(x, -13.5, -y), 0.1);
-
-        // advance physics simulation
         this.world.fixedStep();
 
         // TODO perhaps this would be better served to be moved directly into
         //      ObstacleManager? i think that isolating the angle computation
-        //      logic to the manager class would be nice, since angles are
+        //      logic to the manager class would be nice, since angles arex
         //      otherwise not referenced in BaseScene so far;
         //      - e.g.) update(playerAngle) => update(currPlayerPosition),
         //              and in update, calculate angle from pos'n directly.
