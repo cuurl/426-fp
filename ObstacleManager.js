@@ -10,7 +10,7 @@ export default class ObstacleManager {
         this.obstacleMaterial = obstacleMaterial;
         this.obstacles = [];
         this.minSpacing = Math.PI / 4;
-        this.maxObstacles = 8;
+        this.maxObstacles = 10;
         this.lastSpawnAngle = 0;
 
         this.lastSpawnTime = 0;
@@ -19,6 +19,7 @@ export default class ObstacleManager {
         this.globalCollisionCooldownDuration = 500; // 0.5 seconds global cooldown
 
         this.removalThreshold = Math.PI / 6;
+        this.antiRemovalThreshold = 5 * this.removalThreshold;
 
         this.maxLateralOffset = 60; // make sure this is less than track radius
         this.minForwardAngle = Math.PI / 4; // objects can only spawn at least 45 degrees in front of player
@@ -26,8 +27,8 @@ export default class ObstacleManager {
 
         // Add obstacle type weights for spawning
         this.obstacleTypes = [
-            { type: Obstacle, weight: 0.8 },
-            { type: Enemy, weight: 0.2 }
+            { type: Obstacle, weight: 0.0 },
+            { type: Enemy, weight: 1.0 }
         ];
     }
 
@@ -62,7 +63,7 @@ export default class ObstacleManager {
         const finalX = baseX + perpX * offset;
         const finalZ = baseZ + perpZ * offset;
 
-        return { x: finalX, y: -13.9, z: -finalZ };
+        return { x: finalX, y: -13.5, z: -finalZ };
     }
 
     // Helper method to select obstacle type based on weights
@@ -149,7 +150,7 @@ export default class ObstacleManager {
             
             // Only remove if obstacle is behind player by more than threshold
             // and accounting for angle wrapping
-            if (relativeAngle > this.removalThreshold) {
+            if (relativeAngle > this.removalThreshold && relativeAngle < this.antiRemovalThreshold) {
                 console.log("Removing obstacle at angle:", relativeAngle);
                 if (obstacle instanceof Enemy) {
                     obstacle.cleanup(this.scene, this.world);

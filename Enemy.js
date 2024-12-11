@@ -2,6 +2,11 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import Obstacle from "./Obstacle";
 
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+// import { threeToCannon, ShapeType } from 'three-to-cannon';
+
+const mesh = await new FBXLoader().loadAsync('models/enemy.fbx');
+
 class Projectile {
     constructor(position, direction) {
         const geometry = new THREE.SphereGeometry(0.5);
@@ -15,7 +20,7 @@ class Projectile {
         this.shape = new CANNON.Sphere(0.5);
         this.body = new CANNON.Body({
             mass: 0.1,
-            type: CANNON.BODY_TYPES.DYNAMIC,
+            type: CANNON.BODY_TYPES.KINEMATIC,
         });
         this.body.addShape(this.shape);
         this.body.position.copy(position);
@@ -28,7 +33,7 @@ class Projectile {
         );
 
         this.createdAt = Date.now();
-        this.lifespan = 3000;
+        this.lifespan = 5000;
     }
 
     // checks lifespan of projectile 
@@ -38,7 +43,7 @@ class Projectile {
 }
 
 export default class Enemy extends Obstacle {
-    constructor(position = { x: 0, y: -13.9, z: 0 }) {
+    constructor(position = { x: 0, y: -13.5, z: 0 }) {
         // call parent constructor first
         super(position);
 
@@ -46,7 +51,7 @@ export default class Enemy extends Obstacle {
         this.projectiles = [];
         this.lastShotTime = 0;
         this.shootingCooldown = 2000;
-        this.shootingRange = 40;
+        this.shootingRange = 100;
         
         // store initial position for oscillation
         this.basePosition = {

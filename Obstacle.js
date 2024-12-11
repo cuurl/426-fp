@@ -12,7 +12,7 @@ export default class Obstacle {
      * that isColliding is false, by default.
      */
 
-    constructor(position = { x: 0, y: -13.9, z: 0 }) {
+    constructor(position = { x: 0, y: -13.5, z: 0 }) {
         // three.js-related initializations
         const geometry = new THREE.BoxGeometry(4, 4, 4);
         const material = new THREE.MeshPhongMaterial({

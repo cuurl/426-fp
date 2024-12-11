@@ -257,7 +257,7 @@ class BaseScene {
         //      - e.g.) update(playerAngle) => update(currPlayerPosition),
         //              and in update, calculate angle from pos'n directly.
         const playerAngle = Math.atan2(-currPlayerPos.z, currPlayerPos.x);
-        this.obstacleManager.update(playerAngle);
+        this.obstacleManager.update(playerAngle, this.player.body.position);
 
         this.renderer.render(this.scene, this.camera);
     }
