@@ -6,6 +6,8 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
 import { DEFAULT_PLAYER_MODEL_INDEX } from "./util";
 
+import HolographicMaterial from "./HolographicMaterial";
+
 export default class Player {
     currentModelIndex = DEFAULT_PLAYER_MODEL_INDEX;
     possibleModels = PLAYER_MODELS;
@@ -32,9 +34,26 @@ export default class Player {
             modelPath,
             (modelMesh) => {
                 modelMesh.scale.copy(this.initialMeshScale.clone().multiplyScalar(this.initialMeshScaleFactor));
-                scene.add(modelMesh);
 
                 this.mesh = modelMesh;
+                for (const child of this.mesh.children) {
+                    child.material = new HolographicMaterial({
+                        fresnelAmount: 0.2,
+                        fresnelOpacity: 0.15,
+                        hologramBrightness: 1.7,
+                        scanlineSize: 6,
+                        signalSpeed: 2.3,
+                        hologramColor: "#66FF00",
+                        hologramOpacity: 0.05,
+                        blinkFresnelOnly: true,
+                        enableBlinking: true,
+                        side: THREE.FrontSide,
+                    });
+                }
+
+                scene.add(this.mesh);
+
+                console.log(this.mesh);
             },
 
             undefined,

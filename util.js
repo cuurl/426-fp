@@ -21,22 +21,28 @@ export const LARGE_LANE_RAD   = 87.5;              // radius of outer-most lane
 /* ------------------------------------------------------------------------------------------- */
 // Geometric, mathematical, or otherwise useful non-numeric constants.
 
-export const CAMERA_OFFSET = new Vector3(-10, 10, -10);
+export const CAMERA_OFFSET = new Vector3(0, 10, 0);
 export const GRAVITY       = new Vec3(0, -9.81, 0);
 
 export const PLAYER_MODELS_F_NAME_PREFIX = 'models/Player/';
 
 // TODO auto-scan models/ dir for each model category
 export const PLAYER_MODELS = ['ufo1.fbx', 'ufo2.fbx', 'ufo3.fbx', 'ufo4.fbx'];
-export const TRACK_MODELS  = ['black-hole.fbx'];
 
 export const DEFAULT_PLAYER_MODEL_INDEX = 0;
 /* ------------------------------------------------------------------------------------------- */
 // Useful functions.
 
-// Returns a random number in the range [min, max].
+// Returns a random integer in the range [min, max].
 export default function randRanged(min, max) {
-    return Math.random() * (max - min) + min;
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+// Returns a random color for an obstacle, in its hex representation.
+export function randObstacleColor() {
+    const OBSTACLE_COLORS = ['#ff0000', '#00d5ff'];
+
+    return OBSTACLE_COLORS[randRanged(0, OBSTACLE_COLORS.length)];
 }
 
 // Positions and orients the camera towards the player mesh.
@@ -45,7 +51,14 @@ export function orientCameraTowardsPlayer(camera, player, lookAtVec) {
     const playerPosition = new Vector3();
     player.mesh.getWorldPosition(playerPosition);
 
-    camera.position.lerp(playerPosition.clone().add(CAMERA_OFFSET), 0.1);
+    const newCameraPos = new Vector3().clone().applyMatrix4(player.mesh.matrixWorld);
+
+    newCameraPos.x += 1;
+    newCameraPos.y += 10;
+    newCameraPos.z += 1
+
+    camera.position.lerp(newCameraPos.clone(), 0.0375);
+
     camera.lookAt(playerPosition);
 
 }

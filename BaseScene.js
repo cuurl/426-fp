@@ -11,12 +11,20 @@ import {
     CAMERA_OFFSET,
 } from "./util";
 
+import HolographicMaterial from "./HolographicMaterial";
+
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 import Player from "./Player";
 import GroundTrack from "./GroundTrack";
 import ObstacleManager from "./ObstacleManager";
+
+let earthMesh = await new GLTFLoader().loadAsync("models/earth_hologram.glb");
+console.log(earthMesh);
 
 class BaseScene {
     /* ---------------------------------------------------------------------------- */
@@ -28,6 +36,8 @@ class BaseScene {
 
     tanFOV = null; // see threeInit() - important for window resizing
     initialWindowHeight = null; // (same as above)
+    
+    laneObjects = [];           // for varying lane colors later
 
     composer = null; // post-processing
     /* ---------------------------------------------------------------------------- */
@@ -56,6 +66,9 @@ class BaseScene {
         this.cannonInit(); // cannonJS-related initializations (for physics)
         this.inputInit(); // player event listeners
         this.utilInit(); // DAT GUI, for debugging
+
+        // start w/ high y-pos, for initial animation
+        this.camera.position.y = 1000;
 
         // https://stackoverflow.com/questions/4011793/this-is-undefined-in-javascript-class-methods
         this.animate = this.animate.bind(this);
@@ -120,14 +133,22 @@ class BaseScene {
         this.scene.add(this.floor.basePlane);
 
         // lane setups
-        this.lanes = this.floor.validLanes;
+        this.lanes = this.floor.validLanes, this.laneObjects = [];
         for (const lanePath of this.lanes) {
             const points = lanePath.getPoints(NUM_LANE_SAMPLES);
             const laneGeometry = new THREE.BufferGeometry().setFromPoints(
                 points
             );
-            const laneMaterial = new THREE.LineBasicMaterial({
-                color: 0xff0000,
+
+            const laneMaterial = new HolographicMaterial({
+                fresnelAmount: 0.9,
+                fresnelOpacity: 0.9,
+                hologramBrightness: 1.7,
+                scanlineSize: 2,
+                signalSpeed: 2.3,
+                hologramColor: "#89CFF0",
+                hologramOpacity: 0.6,
+                enableBlinking: true,
             });
 
             const lane = new THREE.Line(laneGeometry, laneMaterial);
@@ -138,7 +159,16 @@ class BaseScene {
             lane.visible = visibleLanes;
 
             this.scene.add(lane);
+            this.laneObjects.push(lane);
         }
+
+        earthMesh = earthMesh.scene;
+
+        earthMesh.position.set(0, -13.9, 0);
+        earthMesh.scale.set(25, 25, 25);
+        earthMesh.visible = true;
+        earthMesh.receiveShadow = true;
+        this.scene.add(earthMesh);
 
         // initially, player is placed on the middle lane
         this.currentLane = this.lanes[INITIAL_LANE_IDX];
@@ -146,9 +176,16 @@ class BaseScene {
         // post-processing
         this.composer = new EffectComposer(this.renderer);
 
-        const renderPass = new RenderPixelatedPass(3, this.scene, this.camera);
+        const renderPass = new RenderPixelatedPass(4, this.scene, this.camera);
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight)
+        );
+
+        bloomPass.strength = 0.5;
+        bloomPass.radius = 0.1;
 
         this.composer.addPass(renderPass);
+        this.composer.addPass(bloomPass);
     }
 
     /* ---------------------------------------------------------------------------- */
@@ -219,25 +256,6 @@ class BaseScene {
                 this.player.currentModelIndex = modelIndex;
                 this.player.chooseModel(this.scene);
             });
-        /*
-        playerFolder.add(this.player.meshScale, 'x', 0.01, 2)
-            .name('Scale (x)')
-            .onChange(() => {
-                this.player.mesh.scale.copy(this.player.meshScale)
-            });
-
-        playerFolder.add(this.player.meshScale, 'y', 0.01, 2)
-            .name('Scale (y)')
-            .onChange(() => {
-                this.player.mesh.scale.copy(this.player.meshScale)
-            });     
-
-        playerFolder.add(this.player.meshScale, 'z', 0.01, 2)
-            .name('Scale (z)')
-            .onChange(() => {
-                this.player.mesh.scale.copy(this.player.meshScale)
-            });
-        */
 
         playerFolder
             .add(this.player, "meshScaleFactor", 0.01, 2)
@@ -275,7 +293,7 @@ class BaseScene {
     inputInit() {
         document.addEventListener("keydown", (event) => {
             switch (event.code) {
-                case "ArrowLeft":
+                case "ArrowRight":
                     this.currentLaneIndex++;
                     this.currentLaneIndex = Math.min(
                         this.currentLaneIndex,
@@ -285,7 +303,7 @@ class BaseScene {
                         this.floor.validLanes[this.currentLaneIndex];
                     break;
 
-                case "ArrowRight":
+                case "ArrowLeft":
                     this.currentLaneIndex--;
                     this.currentLaneIndex = Math.max(this.currentLaneIndex, 0);
                     this.currentLane =

@@ -2,6 +2,8 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import Obstacle from "./Obstacle";
 
+import HolographicMaterial from "./HolographicMaterial";
+
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 // import { threeToCannon, ShapeType } from 'three-to-cannon';
 
@@ -10,10 +12,19 @@ const mesh = await new FBXLoader().loadAsync('models/enemy.fbx');
 class Projectile {
     constructor(position, direction) {
         const geometry = new THREE.SphereGeometry(0.5);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0xffff00,
-            emissive: 0x332200,
+        const material = new HolographicMaterial({
+            fresnelAmount: 0.2,
+            fresnelOpacity: 0.15,
+            hologramBrightness: 1.7,
+            scanlineSize: 6,
+            signalSpeed: 2.3,
+            hologramColor: "#FDEE00",
+            hologramOpacity: 1,
+            blinkFresnelOnly: true,
+            enableBlinking: true,
+            side: THREE.FrontSide,
         });
+
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.copy(position);
 

@@ -1,6 +1,9 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
+import HolographicMaterial from "./HolographicMaterial";
+import { randObstacleColor } from "./util";
+
 export default class Obstacle {
     /* ---------------------------------------------------------------------------- */
 
@@ -15,11 +18,17 @@ export default class Obstacle {
     constructor(position = { x: 0, y: -13.5, z: 0 }) {
         // three.js-related initializations
         const geometry = new THREE.BoxGeometry(4, 4, 4);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0xff0000,
-            emissive: 0x072534,
-            transparent: true,
-            opacity: 1
+        const material = new HolographicMaterial({
+            fresnelAmount: 0.2,
+            fresnelOpacity: 0.15,
+            hologramBrightness: 1.7,
+            scanlineSize: 6,
+            signalSpeed: 2.3,
+            hologramColor: randObstacleColor(),
+            hologramOpacity: 0.9,
+            blinkFresnelOnly: true,
+            enableBlinking: true,
+            side: THREE.FrontSide,
         });
 
         this.mesh = new THREE.Mesh(geometry, material);
