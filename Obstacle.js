@@ -37,6 +37,16 @@ export default class Obstacle {
 
         this.isColliding = false;
         this.shouldBeRemoved = false;
+
+        // const loader = new FBXLoader();
+        // loader.load('models/asteroid.fbx', (fbx) => {
+        //     fbx.scale.set(0.01, 0.01, 0.01);
+        //     fbx.position.copy(this.mesh.position);
+
+        //     this.mesh.parent.add(fbx);
+        //     this.mesh.parent.remove(this.mesh);
+        //     this.mesh = fbx;
+        // });
     }
     /* ---------------------------------------------------------------------------- */
 

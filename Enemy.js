@@ -68,7 +68,17 @@ export default class Enemy extends Obstacle {
         this.movementDirection = 1; // 1 for right, -1 for left
         this.currentOffset = 0; // current lateral offset from base position
 
-        this.mesh.material.color.setHex(0xff6600);
+        // this.mesh.material.color.setHex(0xff6600);
+
+        // const loader = new FBXLoader();
+        // loader.load('models/enemy.fbx', (fbx) => {
+        //     fbx.scale.set(0.01, 0.01, 0.01);
+        //     fbx.position.copy(this.mesh.position);
+
+        //     this.mesh.parent.add(fbx);
+        //     this.mesh.parent.remove(this.mesh);
+        //     this.mesh = fbx;
+        // });
     }
 
     // checks shot cooldown
@@ -142,6 +152,15 @@ export default class Enemy extends Obstacle {
         );
 
         const projectile = new Projectile(projectilePosition, direction);
+
+        projectile.body.addEventListener("collide", (event) => {
+            // check if collision is with player
+            if (event.body === this.player.body) {
+                projectile.mesh.visible = false;
+                projectile.body.visible = false;
+            }
+        });
+
         scene.add(projectile.mesh);
         world.addBody(projectile.body);
         this.projectiles.push(projectile);
@@ -175,7 +194,7 @@ export default class Enemy extends Obstacle {
     }
 
     // override parent's handleCollision to use our own collision logic
-    handleCollision() {
-        return false;
-    }
+    // handleCollision() {
+    //     return false;
+    // }
 }

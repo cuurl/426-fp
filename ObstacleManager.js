@@ -1,5 +1,6 @@
 import Obstacle from "./Obstacle";
 import Enemy from "./Enemy";
+import { FBXLoader } from "three/examples/jsm/Addons.js";
 
 export default class ObstacleManager {
     constructor(player, scene, world, trackRadius, obstacleMaterial) {
@@ -10,7 +11,7 @@ export default class ObstacleManager {
         this.obstacleMaterial = obstacleMaterial;
         this.obstacles = [];
         this.minSpacing = Math.PI / 4;
-        this.maxObstacles = 10;
+        this.maxObstacles = 2;
         this.lastSpawnAngle = 0;
 
         this.lastSpawnTime = 0;
@@ -25,11 +26,20 @@ export default class ObstacleManager {
         this.minForwardAngle = Math.PI / 4; // objects can only spawn at least 45 degrees in front of player
         this.maxForwardAngle = Math.PI
 
-        // Add obstacle type weights for spawning
+        // add obstacle type weights for spawning
         this.obstacleTypes = [
             { type: Obstacle, weight: 0.5 },
             { type: Enemy, weight: 0.5 }
         ];
+
+        this.obstacleModel = null;
+        const obstacleLoader = new FBXLoader();
+        obstacleLoader.load('models/asteroid.fbx', (fbx) => {this.obstacleModel = fbx});
+
+        this.shooterModel = null;
+        const shooterLoader = new FBXLoader();
+        shooterLoader.load('models/enemy.fbx', (fbx) => {this.shooterModel = fbx});
+
     }
 
     // normalize angle to be between -PI and PI
@@ -104,6 +114,21 @@ export default class ObstacleManager {
         // const obstacle = new Obstacle(position);
         // obstacle.body.material = this.obstacleMaterial;
 
+        // apply the appropriate model based on obstacle type
+        if ((obstacle instanceof Enemy) && this.shooterModel) {
+            const model = this.shooterModel.clone();
+            model.scale.set(0.003, 0.003, 0.003);
+            model.position.copy(obstacle.mesh.position);
+            // replace the temporary mesh with the model
+            obstacle.mesh = model;
+        } else if (!(obstacle instanceof Enemy) && this.obstacleModel) {
+            const model = this.obstacleModel.clone();
+            model.scale.set(0.02, 0.02, 0.02);
+            model.position.copy(obstacle.mesh.position);
+            // replace the temporary mesh with the model
+            obstacle.mesh = model;
+        }
+
         // collision handling
         obstacle.body.addEventListener("collide", (event) => {
             const currentTime = Date.now();
@@ -145,10 +170,10 @@ export default class ObstacleManager {
                 return false;
             }
 
-            // Calculate relative angle between player and obstacle
+            // calculate relative angle between player and obstacle
             let relativeAngle = this.normalizeAngle(playerAngle - angle);
             
-            // Only remove if obstacle is behind player by more than threshold
+            // only remove if obstacle is behind player by more than threshold
             // and accounting for angle wrapping
             if (relativeAngle > this.removalThreshold && relativeAngle < this.antiRemovalThreshold) {
                 console.log("Removing obstacle at angle:", relativeAngle);
@@ -161,8 +186,9 @@ export default class ObstacleManager {
                 return false;
             }
 
-            // Update shooting obstacles
+            // update shooting obstacles
             if (obstacle instanceof Enemy) {
+                obstacle.player = this.player;
                 obstacle.update(playerPosition, this.scene, this.world, 1/60);
             }
 
