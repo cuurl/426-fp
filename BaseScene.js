@@ -200,12 +200,13 @@ class BaseScene {
     cannonInit() {
         // create World & add rigid bodies for applicable meshes
         this.world = new CANNON.World({ gravity: GRAVITY });
+        this.world.gravity = new THREE.Vector3(0, 0, 0);
+        this.player.world = this.world;
 
         this.world.addBody(this.floor.body);
         this.world.addBody(this.player.body);
 
         // player-to-obstacle collisions
-        console.log("BaseScene: Initializing ObstacleManager");
         const playerMaterial = new CANNON.Material("player"),
             obstacleMaterial = new CANNON.Material("obstacle");
         const contactMaterial = new CANNON.ContactMaterial(
@@ -309,6 +310,11 @@ class BaseScene {
                     this.currentLane =
                         this.floor.validLanes[this.currentLaneIndex];
                     break;
+
+                case "Space":
+                    this.player.shoot();
+                    this.player.displayWorld();
+                    break;
             }
         });
     }
@@ -347,6 +353,12 @@ class BaseScene {
 
         this.player.mesh.lookAt(orient);
 
+        const forward = new THREE.Vector3()
+            .subVectors(new THREE.Vector3(x, -13.5, -y), currPlayerPos)
+            .normalize();
+        
+        this.player.forwardVector = forward;
+
         // camera positioning
         orientCameraTowardsPlayer(this.camera, this.player);
 
@@ -365,6 +377,7 @@ class BaseScene {
         //              and in update, calculate angle from pos'n directly.
         const playerAngle = Math.atan2(-currPlayerPos.z, currPlayerPos.x);
         this.obstacleManager.update(playerAngle, this.player.body.position);
+        this.player.updateProjectiles();
 
         this.composer.render();
     }

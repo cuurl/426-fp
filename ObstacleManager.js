@@ -127,6 +127,9 @@ export default class ObstacleManager {
         const obstacle = new ObstacleType(position);
         obstacle.body.material = this.obstacleMaterial;
 
+        obstacle.body.collisionFilterGroup = 4;  // Same as enemies (changed from 1)
+        obstacle.body.collisionFilterMask = 1 | 2;
+
         // const obstacle = new Obstacle(position);
         // obstacle.body.material = this.obstacleMaterial;
 

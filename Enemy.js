@@ -1,6 +1,7 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import Obstacle from "./Obstacle";
+import Projectile from "./Projectile";
 
 import HolographicMaterial from "./HolographicMaterial";
 
@@ -8,50 +9,6 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 // import { threeToCannon, ShapeType } from 'three-to-cannon';
 
 const mesh = await new FBXLoader().loadAsync('models/enemy.fbx');
-
-class Projectile {
-    constructor(position, direction) {
-        const geometry = new THREE.SphereGeometry(0.5);
-        const material = new HolographicMaterial({
-            fresnelAmount: 0.2,
-            fresnelOpacity: 0.15,
-            hologramBrightness: 1.7,
-            scanlineSize: 6,
-            signalSpeed: 2.3,
-            hologramColor: "#FDEE00",
-            hologramOpacity: 1,
-            blinkFresnelOnly: true,
-            enableBlinking: true,
-            side: THREE.FrontSide,
-        });
-
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.copy(position);
-
-        this.shape = new CANNON.Sphere(0.5);
-        this.body = new CANNON.Body({
-            mass: 0.1,
-            type: CANNON.BODY_TYPES.KINEMATIC,
-        });
-        this.body.addShape(this.shape);
-        this.body.position.copy(position);
-        
-        const speed = 50;
-        this.body.velocity.set(
-            direction.x * speed,
-            direction.y * speed,
-            direction.z * speed
-        );
-
-        this.createdAt = Date.now();
-        this.lifespan = 5000;
-    }
-
-    // checks lifespan of projectile 
-    shouldRemove() {
-        return Date.now() - this.createdAt > this.lifespan;
-    }
-}
 
 export default class Enemy extends Obstacle {
     constructor(position = { x: 0, y: -13.5, z: 0 }) {
@@ -78,6 +35,9 @@ export default class Enemy extends Obstacle {
         this.movementSpeed = 5; // speed of movement
         this.movementDirection = 1; // 1 for right, -1 for left
         this.currentOffset = 0; // current lateral offset from base position
+
+        this.body.collisionFilterGroup = 4;  // Enemy group (changed from 1)
+        this.body.collisionFilterMask = 1 | 2;
 
         // this.mesh.material.color.setHex(0xff6600);
 
@@ -162,13 +122,13 @@ export default class Enemy extends Obstacle {
             this.mesh.position.z
         );
 
-        const projectile = new Projectile(projectilePosition, direction);
+        const projectile = new Projectile(projectilePosition, direction, false);
 
         projectile.body.addEventListener("collide", (event) => {
-            // check if collision is with player
             if (event.body === this.player.body) {
                 projectile.mesh.visible = false;
                 projectile.body.visible = false;
+                console.log("PLAYER HIT");
             }
         });
 

@@ -38,7 +38,9 @@ export default class Obstacle {
         this.shape = new CANNON.Box(new CANNON.Vec3(2, 2, 2));
         this.body = new CANNON.Body({
             mass: 1,
-            type: CANNON.BODY_TYPES.STATIC
+            type: CANNON.BODY_TYPES.KINEMATIC,
+            collisionFilterGroup: 4,  // Enemy group (changed from 1)
+            collisionFilterMask: 1 | 2,
         });
 
         this.body.addShape(this.shape);
@@ -84,7 +86,6 @@ export default class Obstacle {
         if (!this.isColliding) {
             this.isColliding = true;
             this.shouldBeRemoved = true;
-            this.body.type = CANNON.BODY_TYPES.STATIC; // freeze physics
             this.body.collisionResponse = false; // disable further collisions
             return true;
         }

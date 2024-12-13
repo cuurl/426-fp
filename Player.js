@@ -1,6 +1,8 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
+import Projectile from "./Projectile";
+
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
 import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
@@ -68,9 +70,15 @@ export default class Player {
         this.body = new CANNON.Body({
             mass: 1,
             type: CANNON.BODY_TYPES.DYNAMIC,
+            collisionFilterGroup: 1,  // Player group
+            collisionFilterMask: 4 | 8
         });
 
         this.body.addShape(this.shape);
+        this.projectiles = [];
+        this.scene = scene;
+        this.world = null;
+        this.forwardVector = null;
     }
     /* ---------------------------------------------------------------------------- */
 
@@ -104,4 +112,56 @@ export default class Player {
     }
 
     /* ---------------------------------------------------------------------------- */
+    shoot() {
+
+        const projectilePosition = new THREE.Vector3().copy(this.mesh.position);
+
+        // const yOffset = 3
+        // const temp = projectilePosition.y;
+        // projectilePosition.y = temp + yOffset;
+        
+        const projectile = new Projectile(projectilePosition, this.forwardVector, true);
+
+        projectile.body.addEventListener("collide", (event) => {
+            console.log("CASDONWQE:");
+        });
+
+        this.scene.add(projectile.mesh);
+        this.world.addBody(projectile.body);
+        this.projectiles.push(projectile);        
+    }
+
+    updateProjectiles() {
+        this.projectiles = this.projectiles.filter(projectile => {
+            if (projectile.shouldRemove()) {
+                this.scene.remove(projectile.mesh);
+                this.world.removeBody(projectile.body);
+                return false;
+            }
+
+            projectile.mesh.position.copy(projectile.body.position);
+            projectile.mesh.quaternion.copy(projectile.body.quaternion);
+            return true;
+        });
+    }
+
+    displayVectors() {
+        const xVector = new THREE.Vector3(1, 0, 0);
+        const yVector = new THREE.Vector3(0, 1, 0);
+        const zVector = new THREE.Vector3(0, 0, 1);
+
+        const origin = new THREE.Vector3(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+
+        const xArrowHelper = new THREE.ArrowHelper(xVector, origin, 10, 0xff0000);
+        const yArrowHelper = new THREE.ArrowHelper(yVector, origin, 10, 0xffff00);
+        const zArrowHelper = new THREE.ArrowHelper(zVector, origin, 10, 0xffffff);
+
+        this.scene.add(xArrowHelper);
+        this.scene.add(yArrowHelper);
+        this.scene.add(zArrowHelper);
+    }
+
+    displayWorld() {
+        console.log(this.world);
+    }
 }
