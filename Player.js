@@ -6,6 +6,7 @@ import Projectile from "./Projectile";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
 import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
+import { healthToShipColor } from "./util";
 import { DEFAULT_PLAYER_MODEL_INDEX } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
@@ -22,6 +23,9 @@ export default class Player {
 
     constructor(scene) {
         this.loader = new FBXLoader();
+
+        this.isInvincible = false;
+        this.health = 3;
 
         this.initialMeshScale = new THREE.Vector3(1, 1, 1);
         this.initialMeshScaleFactor = 0.01;
@@ -55,13 +59,13 @@ export default class Player {
 
                 scene.add(this.mesh);
 
-                console.log(this.mesh);
+                //console.log(this.mesh);
             },
 
             undefined,
 
             (err) => {
-                console.log(err);
+                //console.log(err);
             }
         );
 
@@ -123,7 +127,9 @@ export default class Player {
         const projectile = new Projectile(projectilePosition, this.forwardVector, true);
 
         projectile.body.addEventListener("collide", (event) => {
-            console.log("CASDONWQE:");
+            projectile.mesh.visible = false;
+            projectile.body.visible = false;
+            //console.log("KILLED ENEMY");
         });
 
         this.scene.add(projectile.mesh);
@@ -162,6 +168,42 @@ export default class Player {
     }
 
     displayWorld() {
-        console.log(this.world);
+        //console.log(this.world);
+    }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /**
+     * Deducts a hit-point from the player's health, thereby changing the color of
+     * the player model. When the player reaches 0 health (after spawning with 
+     * 3 hit-points), nothing happens yet, because I don't know wtf to do.
+     */
+    deductHealth() {
+        if (this.isInvincible) {
+            return;
+        }
+
+        this.health--;
+
+        if (this.health == 0) {
+            this.mesh.visible = false;
+            console.log('dead, redirecting to wall of shame');
+            window.location.href = './death.html';
+        }
+
+        for (const child of this.mesh.children) {
+            child.material = new HolographicMaterial({
+                fresnelAmount: 0.2,
+                fresnelOpacity: 0.15,
+                hologramBrightness: 1.7,
+                scanlineSize: 6,
+                signalSpeed: 2.3,
+                hologramColor: healthToShipColor(this.health),
+                hologramOpacity: 0.05,
+                blinkFresnelOnly: true,
+                enableBlinking: true,
+                side: THREE.FrontSide,
+            });
+        }
     }
 }

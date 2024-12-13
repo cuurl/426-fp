@@ -9,6 +9,7 @@ import {
     GRAVITY,
     TRACK_LANE_Y_POS,
     CAMERA_OFFSET,
+    PLAYER_INVINCIBILITY_PERIOD,
 } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
@@ -19,12 +20,20 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
+import { Audio, AudioListener } from "three";
+
+import { Timer } from "three/examples/jsm/Addons.js";
+
 import Player from "./Player";
 import GroundTrack from "./GroundTrack";
 import ObstacleManager from "./ObstacleManager";
 
+let songUrl = "public/song.mp3";
+
 let earthMesh = await new GLTFLoader().loadAsync("models/earth_hologram.glb");
-console.log(earthMesh);
+//console.log(earthMesh);
+
+let coin = await new GLTFLoader().loadAsync("models/coin.glb");
 
 class BaseScene {
     /* ---------------------------------------------------------------------------- */
@@ -36,8 +45,8 @@ class BaseScene {
 
     tanFOV = null; // see threeInit() - important for window resizing
     initialWindowHeight = null; // (same as above)
-    
-    laneObjects = [];           // for varying lane colors later
+
+    laneObjects = []; // for varying lane colors later
 
     composer = null; // post-processing
     /* ---------------------------------------------------------------------------- */
@@ -51,6 +60,8 @@ class BaseScene {
     currentLaneIndex = INITIAL_LANE_IDX;
     t = 0.001;
     tStep = 0.001;
+
+    score = 0;
     /* ---------------------------------------------------------------------------- */
 
     /**
@@ -58,17 +69,25 @@ class BaseScene {
      * event handlers for user input, and various utility tools.
      */
 
-    constructor() {
+    constructor(debug = false) {
         this.threeInit(); // threeJS-related initializations & lane logic setup
 
         this.player = new Player(this.scene);
+        this.player.isInvincible = true; // prevent color change b4 animate() runs
 
         this.cannonInit(); // cannonJS-related initializations (for physics)
         this.inputInit(); // player event listeners
-        this.utilInit(); // DAT GUI, for debugging
 
-        // start w/ high y-pos, for initial animation
-        this.camera.position.y = 1000;
+        if (debug) {
+            this.utilInit(); // DAT GUI, for debugging
+        }
+
+        // for initial animation
+        this.camera.position.x = 80;
+        this.camera.position.y = 10;
+        this.camera.position.z = 80;
+
+        this.camera.lookAt(earthMesh.position);
 
         // https://stackoverflow.com/questions/4011793/this-is-undefined-in-javascript-class-methods
         this.animate = this.animate.bind(this);
@@ -133,7 +152,7 @@ class BaseScene {
         this.scene.add(this.floor.basePlane);
 
         // lane setups
-        this.lanes = this.floor.validLanes, this.laneObjects = [];
+        (this.lanes = this.floor.validLanes), (this.laneObjects = []);
         for (const lanePath of this.lanes) {
             const points = lanePath.getPoints(NUM_LANE_SAMPLES);
             const laneGeometry = new THREE.BufferGeometry().setFromPoints(
@@ -186,6 +205,35 @@ class BaseScene {
 
         this.composer.addPass(renderPass);
         this.composer.addPass(bloomPass);
+
+        coin.scene.children[0].scale.set(0.25, 0.25, 0.25);
+
+        console.log(coin);
+
+        coin.scene.children[0].material = new HolographicMaterial({
+            fresnelAmount: 0.2,
+            fresnelOpacity: 0.15,
+            hologramBrightness: 1.7,
+            scanlineSize: 6,
+            signalSpeed: 2.3,
+            hologramColor: "#FFD700",
+            hologramOpacity: 1,
+            blinkFresnelOnly: true,
+            enableBlinking: true,
+            side: THREE.FrontSide,
+        });
+
+        this.scene.add(coin.scene);
+
+        this.audioLoader = new THREE.AudioLoader();
+        this.listener = new THREE.AudioListener();
+        this.camera.add(this.listener);
+
+        this.audioLoader.load(songUrl, (buffer) => {
+            this.audio = new Audio(this.listener);
+            this.audio.setBuffer(buffer);
+            this.audio.setVolume(0.5);
+        });
     }
 
     /* ---------------------------------------------------------------------------- */
@@ -311,6 +359,15 @@ class BaseScene {
                         this.floor.validLanes[this.currentLaneIndex];
                     break;
 
+                case "Enter":
+                    this.inGame = true;
+                    this.player.health = 3;
+                    this.timer = new Timer();
+
+                    this.audio.play();
+
+                    break;
+
                 case "Space":
                     this.player.shoot();
                     this.player.displayWorld();
@@ -331,10 +388,35 @@ class BaseScene {
     animate() {
         requestAnimationFrame(this.animate);
 
+        if (this.inGame) {
+            this.timer.update();
+            console.log(this.timer);
+
+            console.log(
+                `this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD: ${
+                    this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD
+                }`
+            );
+            if (this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD) {
+                this.player.isInvincible = false;
+            }
+
+            console.log(`getElapsed: ${this.timer.getElapsed()}`);
+            console.log(`invinc_pd: ${PLAYER_INVINCIBILITY_PERIOD}`);
+
+            console.log(this.player);
+        }
+
+        if (this.player.health <= 0) {
+            document.location.replace("./death.html");
+        }
+
         this.t += this.tStep;
         if (this.t >= 1) {
             this.t = 0.001;
         }
+
+        this.score++;
 
         // get next expected pos'n along correct path, and curr pos'n of player
         const currPlayerPos = this.player.worldPosition(),
@@ -345,6 +427,10 @@ class BaseScene {
             z = currPlayerPos.z;
 
         this.player.mesh.position.lerp(new THREE.Vector3(x, -13.5, -y), 0.1);
+        coin.scene.children[0].position.lerp(
+            new THREE.Vector3(x + 5, -13.5, -y + 5),
+            0.05
+        );
 
         // correctly orient the player w.r.t. the path
         const orient = new THREE.Vector3()
@@ -356,11 +442,13 @@ class BaseScene {
         const forward = new THREE.Vector3()
             .subVectors(new THREE.Vector3(x, -13.5, -y), currPlayerPos)
             .normalize();
-        
+
         this.player.forwardVector = forward;
 
         // camera positioning
-        orientCameraTowardsPlayer(this.camera, this.player);
+        if (this.inGame) {
+            orientCameraTowardsPlayer(this.camera, this.player);
+        }
 
         // three -> cannon
         this.player.body.position.copy(this.player.mesh.position);
@@ -379,6 +467,13 @@ class BaseScene {
         this.obstacleManager.update(playerAngle, this.player.body.position);
         this.player.updateProjectiles();
 
+        // change score text
+        if (this.inGame) {
+            document.getElementById("score").innerHTML = this.score;
+        } else {
+            document.getElementById("score").innerHTML = "Press Enter to play.";
+        }
+
         this.composer.render();
     }
 
@@ -387,5 +482,5 @@ class BaseScene {
     /* ---------------------------------------------------------------------------- */
 }
 
-const scene = new BaseScene();
+const scene = new BaseScene(false);
 scene.animate();

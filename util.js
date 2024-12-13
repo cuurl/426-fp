@@ -18,6 +18,12 @@ export const TRACK_RAD        = 100;               // radius of standard GroundT
 export const SMALL_LANE_RAD   = 62.5;              // radius of inner-most lane
 export const INITIAL_LANE_RAD = 75;                // radius of middle (initial) lane
 export const LARGE_LANE_RAD   = 87.5;              // radius of outer-most lane
+
+export const PLAYER_HEALTH_FULL = 3;
+export const PLAYER_HEALTH_MED  = 2;
+export const PLAYER_HEALTH_NEAR_DEATH = 1;
+
+export const PLAYER_INVINCIBILITY_PERIOD = 5;   // 5 sec of invincibility on spawning
 /* ------------------------------------------------------------------------------------------- */
 // Geometric, mathematical, or otherwise useful non-numeric constants.
 
@@ -61,4 +67,24 @@ export function orientCameraTowardsPlayer(camera, player, lookAtVec) {
 
     camera.lookAt(playerPosition);
 
+}
+
+// Returns the correct ship color for the player, given their current
+// health / hit-point count.
+export function healthToShipColor(playerHealth) {
+    let color;
+
+    switch (playerHealth) {
+        case PLAYER_HEALTH_FULL:
+            color = '#66FF00';
+            break;
+        case PLAYER_HEALTH_MED:
+            color = '#FFBF00';
+            break
+        case PLAYER_HEALTH_NEAR_DEATH:
+            color = '#E60026';
+            break; 
+    }
+
+    return color;
 }

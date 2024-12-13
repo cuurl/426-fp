@@ -15,7 +15,7 @@ export default class Obstacle {
      * that isColliding is false, by default.
      */
 
-    constructor(position = { x: 0, y: -13.5, z: 0 }) {
+    constructor(position = { x: 0, y: -13.5, z: 0 }, player) {
         // three.js-related initializations
         const geometry = new THREE.BoxGeometry(4, 4, 4);
         const material = new HolographicMaterial({
@@ -30,6 +30,8 @@ export default class Obstacle {
             enableBlinking: true,
             side: THREE.FrontSide,
         });
+
+        this.player = player;
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.set(position.x, position.y, position.z);
@@ -87,6 +89,12 @@ export default class Obstacle {
             this.isColliding = true;
             this.shouldBeRemoved = true;
             this.body.collisionResponse = false; // disable further collisions
+
+            this.player.deductHealth();
+            if (this.player.health <= 0) {
+                window.location.href = './death.html';
+            }
+
             return true;
         }
 

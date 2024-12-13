@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Endless Runner Game</title>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+            #score {
+                position: absolute;
+                top: 10px;
+                width: 100%;
+                text-align: center;
+                z-index: 100;
+                font-size: 2.5em;
+                display: block;
+                color: white;
+                font-family: "Retro Gaming";
+            }
+            #retry {
+                position: absolute;
+                top: 100px;
+                width: 100%;
+                text-align: center;
+                z-index: 100;
+                font-size: 2.5em;
+                display: block;
+                color: white;
+                font-family: "Retro Gaming";
+            }
+            @font-face {
+                font-family: "Retro Gaming";
+                src: url("public/font.ttf") format("truetype");
+            }
+        </style>
+        <script type="application/x-glsl" id="sky-vertex">
+            varying vec2 vUV;
+
+            void main() {
+              vUV = uv;
+              vec4 pos = vec4(position, 1.0);
+              gl_Position = projectionMatrix * modelViewMatrix * pos;
+            }
+        </script>
+
+        <script type="application/x-glsl" id="sky-fragment">
+            precision mediump float; // Add precision declaration
+
+            uniform sampler2D skyTexture; // Renamed from 'texture' to avoid conflicts
+            varying vec2 vUV;
+
+            void main() {
+                vec4 colorSample = texture(skyTexture, vUV); // Use 'texture()' instead of 'texture2D()'
+                gl_FragColor = vec4(colorSample.xyz, colorSample.w);
+            }
+        </script>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://cdn.jsdelivr.net/npm/three@<version>/build/three.module.js",
+                    "three/addons/": "https://cdn.jsdelivr.net/npm/three@<version>/examples/jsm/"
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <script type="module" src="./DeathScene.js"></script>
+        <div id="score">Description</div>
+        <div id="retry">Press spacebar to play again.</div>
+    </body>
+</html>

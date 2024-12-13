@@ -43,8 +43,8 @@ export default class Projectile {
         this.lifespan = 2500;
         this.hasHitEnemy = false;
 
-        //console.log("Player projectile group:", this.body.collisionFilterGroup);
-        //console.log("Collision mask:", this.body.collisionFilterMask);
+        ////console.log("Player projectile group:", this.body.collisionFilterGroup);
+        ////console.log("Collision mask:", this.body.collisionFilterMask);
     }
 
     // checks lifespan of projectile 

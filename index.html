@@ -9,6 +9,21 @@
                 margin: 0;
                 overflow: hidden;
             }
+            #score {
+                position: absolute;
+                top: 10px;
+                width: 100%;
+                text-align: center;
+                z-index: 100;
+                font-size: 2.5em;
+                display: block;
+                color: white;
+                font-family: "Retro Gaming";
+            }
+            @font-face {
+                font-family: "Retro Gaming";
+                src: url("public/font.ttf") format("truetype");
+            }
         </style>
         <script type="application/x-glsl" id="sky-vertex">
             varying vec2 vUV;
@@ -43,5 +58,6 @@
     </head>
     <body>
         <script type="module" src="./BaseScene.js"></script>
+        <div id="score">Description</div>
     </body>
 </html>

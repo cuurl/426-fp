@@ -124,7 +124,7 @@ export default class ObstacleManager {
 
         // Select and create obstacle type
         const ObstacleType = this.selectObstacleType();
-        const obstacle = new ObstacleType(position);
+        const obstacle = new ObstacleType(position, this.player);
         obstacle.body.material = this.obstacleMaterial;
 
         obstacle.body.collisionFilterGroup = 4;  // Same as enemies (changed from 1)
@@ -192,7 +192,7 @@ export default class ObstacleManager {
                 !obstacle.isColliding &&
                 obstacle.handleCollision(currentTime)
             ) {
-                console.log("Collision detected! Removing obstacle...");
+                //console.log("COLLISION DETECTED");
                 this.globalCollisionCooldown =
                     currentTime + this.globalCollisionCooldownDuration;
             }
@@ -209,12 +209,12 @@ export default class ObstacleManager {
         this.lastSpawnAngle = spawnAngle;
         this.lastSpawnTime = currentTime;
 
-        console.log(
-            "Spawned obstacle at position: x: " +
+        /*console.log(
+            "SPAWNED OBSTACLE: x: " +
                 position.x +
                 " z: " +
                 position.z
-        );
+        );*/
     }
 
     update(playerAngle, playerPosition) {
@@ -238,7 +238,7 @@ export default class ObstacleManager {
                 relativeAngle > this.removalThreshold &&
                 relativeAngle < this.antiRemovalThreshold
             ) {
-                console.log("Removing obstacle at angle:", relativeAngle);
+                //console.log("REMOVING OBSTACLE: ", relativeAngle);
                 if (obstacle instanceof Enemy) {
                     obstacle.cleanup(this.scene, this.world);
                 } else {
