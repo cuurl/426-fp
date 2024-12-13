@@ -11,7 +11,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 const mesh = await new FBXLoader().loadAsync('models/enemy.fbx');
 
 export default class Enemy extends Obstacle {
-    constructor(position = { x: 0, y: -13.5, z: 0 }) {
+    constructor(position = { x: 0, y: -13.5, z: 0 }, player) {
         // call parent constructor first
         super(position);
 
@@ -38,6 +38,8 @@ export default class Enemy extends Obstacle {
 
         this.body.collisionFilterGroup = 4;  // Enemy group (changed from 1)
         this.body.collisionFilterMask = 1 | 2;
+
+        this.player = player;
 
         // this.mesh.material.color.setHex(0xff6600);
 
@@ -128,6 +130,7 @@ export default class Enemy extends Obstacle {
             if (event.body === this.player.body) {
                 projectile.mesh.visible = false;
                 projectile.body.visible = false;
+                this.player.deductHealth();
                 //console.log("PLAYER HIT");
             }
         });

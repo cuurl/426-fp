@@ -33,8 +33,6 @@ let songUrl = "public/song.mp3";
 let earthMesh = await new GLTFLoader().loadAsync("models/earth_hologram.glb");
 //console.log(earthMesh);
 
-let coin = await new GLTFLoader().loadAsync("models/coin.glb");
-
 class BaseScene {
     /* ---------------------------------------------------------------------------- */
     // THREE.js related declarations
@@ -206,24 +204,7 @@ class BaseScene {
         this.composer.addPass(renderPass);
         this.composer.addPass(bloomPass);
 
-        coin.scene.children[0].scale.set(0.25, 0.25, 0.25);
-
-        console.log(coin);
-
-        coin.scene.children[0].material = new HolographicMaterial({
-            fresnelAmount: 0.2,
-            fresnelOpacity: 0.15,
-            hologramBrightness: 1.7,
-            scanlineSize: 6,
-            signalSpeed: 2.3,
-            hologramColor: "#FFD700",
-            hologramOpacity: 1,
-            blinkFresnelOnly: true,
-            enableBlinking: true,
-            side: THREE.FrontSide,
-        });
-
-        this.scene.add(coin.scene);
+        //console.log(coin);
 
         this.audioLoader = new THREE.AudioLoader();
         this.listener = new THREE.AudioListener();
@@ -390,21 +371,21 @@ class BaseScene {
 
         if (this.inGame) {
             this.timer.update();
-            console.log(this.timer);
+            //console.log(this.timer);
 
-            console.log(
-                `this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD: ${
-                    this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD
-                }`
-            );
+            // console.log(
+            //     `this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD: ${
+            //         this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD
+            //     }`
+            // );
             if (this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD) {
                 this.player.isInvincible = false;
             }
 
-            console.log(`getElapsed: ${this.timer.getElapsed()}`);
-            console.log(`invinc_pd: ${PLAYER_INVINCIBILITY_PERIOD}`);
+            // console.log(`getElapsed: ${this.timer.getElapsed()}`);
+            // console.log(`invinc_pd: ${PLAYER_INVINCIBILITY_PERIOD}`);
 
-            console.log(this.player);
+            // console.log(this.player);
         }
 
         if (this.player.health <= 0) {
@@ -427,10 +408,10 @@ class BaseScene {
             z = currPlayerPos.z;
 
         this.player.mesh.position.lerp(new THREE.Vector3(x, -13.5, -y), 0.1);
-        coin.scene.children[0].position.lerp(
-            new THREE.Vector3(x + 5, -13.5, -y + 5),
-            0.05
-        );
+        // coin.scene.children[0].position.lerp(
+        //     new THREE.Vector3(x + 5, -13.5, -y + 5),
+        //     0.05
+        // );
 
         // correctly orient the player w.r.t. the path
         const orient = new THREE.Vector3()
