@@ -3,6 +3,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    assetsInclude: ['**/*.fbx', '**/*.glb', '**/*.ogg', '**/*.ttf', '**/*.mp3'],
     supported: {
         "top-level-await": true, //browsers can handle top-level-await features
     },
