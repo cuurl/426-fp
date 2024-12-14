@@ -30,7 +30,7 @@ export const PLAYER_INVINCIBILITY_PERIOD = 5;   // 5 sec of invincibility on spa
 /* ------------------------------------------------------------------------------------------- */
 // Geometric, mathematical, or otherwise useful non-numeric constants.
 
-export const CAMERA_OFFSET = new Vector3(0, 10, 0);
+export const CAMERA_OFFSET = new Vector3(1, 10, 1);
 export const GRAVITY       = new Vec3(0, -9.81, 0);
 
 export const PLAYER_MODELS_F_NAME_PREFIX = 'models/Player/';
@@ -70,16 +70,10 @@ export function orientCameraTowardsPlayer(camera, player) {
     const playerPosition = new Vector3();
     player.mesh.getWorldPosition(playerPosition);
 
-    const newCameraPos = new Vector3().clone().applyMatrix4(player.mesh.matrixWorld);
-
-    newCameraPos.x += 1;
-    newCameraPos.y += 10;
-    newCameraPos.z += 1
+    const newCameraPos = new Vector3().clone().applyMatrix4(player.mesh.matrixWorld).add(CAMERA_OFFSET);
 
     camera.position.lerp(newCameraPos.clone(), 0.0375);
-
     camera.lookAt(playerPosition);
-
 }
 
 // Returns the correct ship color for the player, given their current
@@ -102,7 +96,8 @@ export function healthToShipColor(playerHealth) {
     return color;
 }
 
-// see below
+/* ------------------------------------------------------------------------------------------- */
+// Audio handling.
 
 export function initAudio() {
     return new AudioListener();
@@ -138,3 +133,4 @@ export function coinSound() {
         sound.play();
     });
 }
+/* ------------------------------------------------------------------------------------------- */

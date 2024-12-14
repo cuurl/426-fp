@@ -248,70 +248,15 @@ class DeathScene {
             obstacleMaterial
         );
 
-        this.obstacleManager.spawnCooldown = 20;
+        this.obstacleManager.spawnCooldown = 0;
         this.obstacleManager.minForwardAngle = 0;
         this.obstacleManager.maxForwardAngle = Math.PI * 2;
         this.obstacleManager.minSpacing = 0;
         this.obstacleManager.removalThreshold = Infinity;
-        this.obstacleManager.maxObstacles = 100;
+        this.obstacleManager.maxObstacles = 500;
         this.obstacleManager.obstacleTypes[0].weight = 0.0;
         this.obstacleManager.obstacleTypes[1].weight = 1.0;
-    }
-
-    /* ---------------------------------------------------------------------------- */
-
-    /**
-     * Sets up primitives for debugging; for now, just DAT-Gui, to
-     * allow more granular control of the scene parameters and internal
-     * game logic.
-     */
-    utilInit() {
-        this.gui = new GUI();
-
-        const tuningFolder = this.gui.addFolder("Tuning");
-        tuningFolder.add(this, "tStep", 0, 1, 0.001);
-        tuningFolder.open();
-
-        const playerFolder = this.gui.addFolder("Player");
-
-        playerFolder.add(CAMERA_OFFSET, "x", -100, 100, 1);
-        playerFolder.add(CAMERA_OFFSET, "y", -100, 100, 1);
-        playerFolder.add(CAMERA_OFFSET, "z", -100, 100, 1);
-
-        playerFolder
-            .add(this.player, "currentModelIndex", [0, 1, 2, 3])
-            .name("Player model")
-            .onChange((modelIndex) => {
-                this.player.currentModelIndex = modelIndex;
-                this.player.chooseModel(this.scene);
-            });
-
-        playerFolder
-            .add(this.player, "meshScaleFactor", 0.01, 2)
-            .name("Full scale")
-            .onChange(() => {
-                this.player.meshScale.multiplyScalar(
-                    this.player.meshScaleFactor
-                );
-                this.player.mesh.scale.copy(this.player.meshScale);
-            });
-
-        const graphicsFolder = this.gui.addFolder("Graphics");
-
-        graphicsFolder.add(this.renderer, "toneMapping", {
-            No: THREE.NoToneMapping,
-            Linear: THREE.LinearToneMapping,
-            Reinhard: THREE.ReinhardToneMapping,
-            Cineon: THREE.CineonToneMapping,
-            ACESFilmic: THREE.ACESFilmicToneMapping,
-        });
-
-        graphicsFolder.add(this.renderer, "toneMappingExposure", 0, 10, 0.001);
-
-        const cameraFolder = this.gui.addFolder("Camera");
-        cameraFolder.add(this.camera.position, "x", -1000, 1000, 1);
-        cameraFolder.add(this.camera.position, "y", -1000, 1000, 1);
-        cameraFolder.add(this.camera.position, "z", -1000, 1000, 1);
+        this.obstacleManager.obstacleTypes[2].weight = 0.0;
     }
 
     /* ---------------------------------------------------------------------------- */

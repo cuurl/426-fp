@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css"
+  height="354px" preserveAspectRatio="none" style="width:897px;height:354px;" version="1.1" viewBox="0 0 897 354"
+  width="897px" zoomAndPan="magnify">
+  <defs />
+  <g>
+    <!--MD5=[a6f11bb19cee6b13000111f5ad685e8b]
+cluster Dependencies-->
+    <path
+      d="M275.727,259 L369.727,259 A4.5,4.5 0 0 1 372.727,262 L379.727,279.4844 L499.727,279.4844 A3,3 0 0 1 502.727,282.4844 L502.727,339 A3,3 0 0 1 499.727,342 L275.727,342 A3,3 0 0 1 272.727,339 L272.727,262 A3,3 0 0 1 275.727,259 "
+      fill="#FFFFFF" style="stroke: #000000; stroke-width: 1.5;" />
+    <line style="stroke: #000000; stroke-width: 1.5;" x1="272.727" x2="379.727" y1="279.4844" y2="279.4844" /><text
+      fill="#000000" font-family="Tahoma, sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs"
+      textLength="94" x="276.727" y="273.0059">Dependencies</text>
+    <!--MD5=[fab6015b062ab5422fc4e40cb573d7d1]
+entity cannon-es-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #383838; stroke-width: 1.0;" width="82"
+      x="340.727" y="292" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="335.727" y="297" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="335.727" y="316.4844" />
+    <text fill="#000000" font-family="Tahoma, sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="62"
+      x="350.727" y="314.0059">cannon-es</text>
+    <!--MD5=[8ae7cf8ccb4ec9568367d33d270cada3]
+entity dat-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #383838; stroke-width: 1.0;" width="38"
+      x="288.727" y="292" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="283.727" y="297" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="283.727" y="316.4844" />
+    <text fill="#000000" font-family="Tahoma, sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="18"
+      x="298.727" y="314.0059">dat</text>
+    <!--MD5=[5e5ae108149962495abf7487b9552b34]
+entity three-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #383838; stroke-width: 1.0;" width="49"
+      x="437.227" y="292" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="432.227" y="297" />
+    <rect fill="#F8F8F8" height="5" style="stroke: #383838; stroke-width: 1.0;" width="10" x="432.227" y="316.4844" />
+    <text fill="#000000" font-family="Tahoma, sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="29"
+      x="447.227" y="314.0059">three</text>
+    <ellipse cx="143.498" cy="42.8542" fill="#F8F8F8" rx="54.771" ry="13.3542"
+      style="stroke: #383838; stroke-width: 0.5;" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="74" x="106.498" y="46.5964">BaseScene</text>
+    <!--MD5=[5ae83b62847b3a0fcb1f430b4e6cbcb1]
+entity _Coin-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="46"
+      x="759.727" y="87" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="26" x="769.727" y="109.0059">Coin</text>
+    <ellipse cx="323.6828" cy="42.7912" fill="#F8F8F8" rx="56.9558" ry="13.7912"
+      style="stroke: #383838; stroke-width: 0.5;" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="80" x="283.6828" y="46.5334">DeathScene</text>
+    <!--MD5=[0c6c62b3001c921ecb222ed82a699e1f]
+entity _Enemy-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="58"
+      x="638.727" y="87" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="38" x="648.727" y="109.0059">Enemy</text>
+    <!--MD5=[274d7c6694e816e24272f00fee32dabc]
+entity _GroundTrack-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="93"
+      x="83.2272" y="148" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="73" x="93.2272" y="170.0059">GroundTrack</text>
+    <ellipse cx="559.835" cy="225.9216" fill="#F8F8F8" rx="70.108" ry="16.4216"
+      style="stroke: #383838; stroke-width: 0.5;" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="113" x="503.335" y="229.6638">HolographicMaterial</text>
+    <!--MD5=[2c91a9cece3adf6360d5f89a58a5a779]
+entity _Obstacle-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="72"
+      x="698.727" y="148" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="52" x="708.727" y="170.0059">Obstacle</text>
+    <!--MD5=[14a7f2e76b536b57c15ee96458cc3d7d]
+entity _ObstacleManager-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="120"
+      x="581.727" y="26" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="100" x="591.727" y="48.0059">ObstacleManager</text>
+    <!--MD5=[52b4d1204048b23082378d6683838240]
+entity _Player-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="54"
+      x="272.727" y="87" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="34" x="282.727" y="109.0059">Player</text>
+    <!--MD5=[83dd6e39cd27ace1dc7d11b7495f40a0]
+entity _Projectile-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="74"
+      x="430.727" y="148" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="54" x="440.727" y="170.0059">Projectile</text>
+    <!--MD5=[8e033d34a910c03b7186e63335afb145]
+entity _util-->
+    <rect fill="#F8F8F8" height="34.4844" rx="3" ry="3" style="stroke: #000000; stroke-width: 0.5;" width="37"
+      x="360.227" y="209" /><text fill="#000000" font-family="Tahoma, sans-serif" font-size="12"
+      lengthAdjust="spacingAndGlyphs" textLength="17" x="370.227" y="231.0059">util</text>
+    <!--MD5=[90bce4cc44327de46b2070d7c3f60990]
+link <b>BaseScene</b> to cannon-es-->
+    <path
+      d="M102.6649,52.019 C83.1028,58.123 61.4612,68.729 49.7272,87 C26.9113,122.527 29.059,145.182 49.7272,182 C75.2114,227.397 99.9244,227.834 149.727,243 C188.88,254.923 297.003,232.934 333.727,251 C349.684,258.85 362.344,274.7042 370.647,287.7034 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;cannon-es" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="373.295,291.9867,371.9672,282.2278,370.6669,287.7331,365.1615,286.4328,373.295,291.9867"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[3711343603f739972f20cf06aec170ab]
+link <b>BaseScene</b> to dat-->
+    <path
+      d="M92.5208,48.026 C66.1922,52.999 36.2413,63.794 19.7272,87 C-15.5967,136.637 23.1786,196.358 78.7272,243 C139.526,294.05 238.023,305.0858 283.408,307.4143 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;dat" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="288.414,307.6465,279.61,303.2317,283.4194,307.4136,279.2375,311.223,288.414,307.6465"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[bb3c68b9733db48f4087ab65a7b23ca7]
+link <b>BaseScene</b> to _GroundTrack-->
+    <path d="M142.229,56.842 C139.832,77.389 135.109,117.867 132.204,142.768 " fill="none"
+      id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;_GroundTrack" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="131.613,147.832,136.6277,139.3554,132.1917,142.8656,128.6815,138.4296,131.613,147.832"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[cd7b831851af71df732df217bd0adb82]
+link <b>BaseScene</b> to HolographicMaterial-->
+    <path d="M190.125,50.281 C283.409,63.828 488.942,98.613 537.727,148 C552.426,162.88 557.446,186.862 559.088,204.11 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;HolographicMaterial"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="559.496,209.229,562.7685,199.9397,559.0989,204.2448,554.7938,200.5751,559.496,209.229"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[361f72d896e9c4d7888630e08d800403]
+link <b>BaseScene</b> to _ObstacleManager-->
+    <path d="M177.51,32.265 C201.991,25.068 236.044,16.247 266.727,12.5 C374.842,-0.705 501.215,16.233 576.19,29.648 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;_ObstacleManager" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000" points="581.499,30.607,573.3548,25.0688,576.5789,29.717,571.9307,32.9411,581.499,30.607"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[552daa4eb7bd4c0cd50b5c5fa50d9d6b]
+link <b>BaseScene</b> to _Player-->
+    <path d="M173.46,54.38 C197.412,62.85 231.891,75.291 261.727,87 C263.676,87.765 265.676,88.564 267.689,89.379 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;_Player" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000" points="272.395,91.303,265.5788,84.1939,267.767,89.4104,262.5506,91.5987,272.395,91.303"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[4120bcefe4616b862c99f6bff7ae3088]
+link <b>BaseScene</b> to three-->
+    <path
+      d="M129.163,56.237 C101.0551,81.334 44.7247,139.818 75.7272,182 C89.1717,200.293 248.379,239.009 270.727,243 C288.141,246.11 414.691,241.683 429.727,251 C442.672,259.0214 450.838,274.2946 455.679,287.0134 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;three" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="457.434,291.9204,458.1693,282.099,455.7501,287.2125,450.6366,284.7933,457.434,291.9204"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[51872a7a369773a828d8d00fc32623bd]
+link <b>BaseScene</b> to _util-->
+    <path
+      d="M158.277,56.153 C187.709,80.612 256.629,137.268 316.727,182 C329.455,191.474 344.018,201.609 355.831,209.658 "
+      fill="none" id="&lt;b&gt;BaseScene&lt;/b&gt;-&gt;_util" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000" points="360.05,212.525,354.8518,204.1597,355.9136,209.716,350.3573,210.7779,360.05,212.525"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[82f402db9e5a62bd015edfb0789cd4ad]
+link _Coin to cannon-es-->
+    <path
+      d="M784.941,121.156 C786.428,137.331 786.724,162.546 777.727,182 C761.367,217.375 750.645,227.87 714.727,243 C685.532,255.298 458.26,237.235 429.727,251 C413.71,258.727 401.054,274.5903 392.768,287.6243 "
+      fill="none" id="_Coin-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="390.127,291.9202,398.2478,286.3478,392.7454,287.6606,391.4325,282.1583,390.127,291.9202"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[a12b999605aa7364f832d8fa19348257]
+link _Coin to _Obstacle-->
+    <path d="M769.611,121.122 C763.896,128.146 757.137,136.454 751.098,143.878 " fill="none" id="_Coin-&gt;_Obstacle"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="747.828,147.897,756.6108,143.4403,750.9836,144.0186,750.4053,138.3914,747.828,147.897"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[1a17692427f3fe3cf3528b310d8a3f13]
+link _Coin to three-->
+    <path
+      d="M788.347,121.115 C790.84,129.095 793.487,138.939 794.727,148 C800.58,190.749 806.898,214.247 774.727,243 C732.885,280.3974 561.824,299.2725 491.813,305.5515 "
+      fill="none" id="_Coin-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="486.551,306.0167,495.8681,309.2092,491.5316,305.5767,495.1641,301.2402,486.551,306.0167"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[42adb2203bb38c8b7895c6821a889695]
+link <b>DeathScene</b> to cannon-es-->
+    <path
+      d="M298.643,55.608 C286.321,62.764 272.66,73.229 265.727,87 C234.385,149.252 232.596,193.565 281.727,243 C298.21,259.5852 313.34,239.549 333.727,251 C348.897,259.5205 361.375,274.8193 369.803,287.4232 "
+      fill="none" id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;cannon-es" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="372.722,291.9272,371.1833,282.1993,370.0024,287.7315,364.4702,286.5506,372.722,291.9272"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[5ec3dce97d5cc9c997af79d6f38138a7]
+link <b>DeathScene</b> to dat-->
+    <path
+      d="M275.391,50.549 C240.062,56.646 191.713,67.774 152.727,87 C113.57,106.311 94.7339,108.695 75.7272,148 C30.9912,240.513 215.818,288.9215 283.642,303.3242 "
+      fill="none" id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;dat" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="288.698,304.3808,280.7066,298.6243,283.8037,303.3579,279.0701,306.4551,288.698,304.3808"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[5fe710e4dd9293f80e015e3757342b84]
+link <b>DeathScene</b> to _GroundTrack-->
+    <path
+      d="M277.378,51.274 C249.469,57.361 214.311,68.193 187.727,87 C167.121,101.578 150.664,125.705 140.619,143.069 "
+      fill="none" id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;_GroundTrack" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="137.958,147.774,145.8699,141.9087,140.4191,143.4217,138.9062,137.9709,137.958,147.774"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[a24257dbec7cbe7ea7d9b6aaa302f58e]
+link <b>DeathScene</b> to HolographicMaterial-->
+    <path
+      d="M376.241,48.547 C435.656,56.918 529.162,80.671 567.727,148 C577.595,165.228 573.411,188.211 568.106,204.573 "
+      fill="none" id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;HolographicMaterial"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="566.438,209.424,573.1468,202.2135,568.0636,204.6956,565.5815,199.6125,566.438,209.424"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[8fae49c2dddfaedfb1b516cfa5f61ac6]
+link <b>DeathScene</b> to _ObstacleManager-->
+    <path d="M380.868,43 C446.082,43 511.296,43 576.51,43 " fill="none"
+      id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;_ObstacleManager" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000" points="581.607,43,572.607,39,576.607,43,572.607,47,581.607,43"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[eda2f3c88de80e7ba007e524a105fed4]
+link <b>DeathScene</b> to _Player-->
+    <path d="M318.401,57.094 C315.427,64.404 311.652,73.684 308.276,81.984 " fill="none"
+      id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;_Player" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000" points="306.236,87,313.3328,80.1709,308.1203,82.3686,305.9226,77.1561,306.236,87"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[c93e384930f4fdac016ca37ed67a880b]
+link <b>DeathScene</b> to three-->
+    <path
+      d="M377.451,47.774 C502.967,56.715 805.433,79.036 812.727,87 C859.773,138.364 846.666,193.437 797.727,243 C754.973,286.3 565.525,301.9223 491.505,306.4374 "
+      fill="none" id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;three" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="486.378,306.7435,495.6008,310.1989,491.3691,306.4449,495.1231,302.2132,486.378,306.7435"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[6f4be5fb7a6274ca7b0cf0e992b56ee7]
+link <b>DeathScene</b> to _util-->
+    <path d="M327.683,57.017 C337.088,87.969 360.857,166.191 372.333,203.956 " fill="none"
+      id="&lt;b&gt;DeathScene&lt;/b&gt;-&gt;_util" style="stroke: #000000; stroke-width: 1.0;" />
+    <polygon fill="#000000"
+      points="373.802,208.791,375.0143,199.017,372.3491,204.0067,367.3595,201.3416,373.802,208.791"
+      style="stroke: #000000; stroke-width: 1.0;" />
+    <!--MD5=[bbdfaf0e5a7dc23b02d3e93b7c5e2793]
+link _Enemy to cannon-es-->
+    <path
+      d="M669.731,121.385 C672.323,150.986 672.842,213.077 636.727,243 C619.003,257.685 450.405,240.89 429.727,251 C413.751,258.8115 401.092,274.6685 392.795,287.6786 "
+      fill="none" id="_Enemy-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="390.15,291.9659,398.2807,286.4078,392.776,287.711,391.4728,282.2063,390.15,291.9659"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[b49720d38ba5c4b01144197d80ba5c09]
+link _Enemy to HolographicMaterial-->
+    <path
+      d="M662.186,121.252 C655.87,137.967 644.237,164.028 627.727,182 C618.134,192.443 605.455,201.366 593.646,208.332 "
+      fill="none" id="_Enemy-&gt;HolographicMaterial" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="588.999,211.001,598.7953,209.9851,593.3342,208.5099,594.8095,203.0488,588.999,211.001"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[2a8537ca984525be94c7e6b1ae3839cb]
+link _Enemy to _Obstacle-->
+    <path d="M686.035,121.122 C694.16,128.276 703.796,136.762 712.344,144.289 " fill="none" id="_Enemy-&gt;_Obstacle"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="716.441,147.897,712.3312,138.9466,712.6889,144.5922,707.0434,144.9499,716.441,147.897"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[c12df031a023ebf42cfc8a5305102748]
+link _Enemy to _Projectile-->
+    <path d="M638.645,113.579 C604.845,123.55 548.772,140.092 510.122,151.494 " fill="none" id="_Enemy-&gt;_Projectile"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="505.025,152.997,514.7889,154.2879,509.8208,151.5827,512.526,146.6146,505.025,152.997"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[54d6797411494e23fcbd63eb239d6688]
+link _Enemy to three-->
+    <path
+      d="M696.963,107.503 C723.025,111.46 759.748,121.668 777.727,148 C802.694,184.567 782.471,215.553 747.727,243 C707.893,274.4686 556.606,296.3494 491.65,304.4872 "
+      fill="none" id="_Enemy-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="486.381,305.1408,495.8051,308.0021,491.3429,304.5251,494.8199,300.063,486.381,305.1408"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[64213a43585de2c5532c3f0739f59a46]
+link _Enemy to _util-->
+    <path
+      d="M638.631,107.079 C581.702,111.631 458.146,124.037 423.727,148 C404.33,161.505 392.065,186.282 385.324,204.086 "
+      fill="none" id="_Enemy-&gt;_util" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="383.568,208.908,390.4067,201.8205,385.2792,204.21,382.8898,199.0825,383.568,208.908"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[da58f7c764725aed000cbea2aee3b5f8]
+link _GroundTrack to cannon-es-->
+    <path
+      d="M136.623,182.023 C145.488,200.396 162.771,229.689 187.727,243 C216.397,258.2915 304.652,236.493 333.727,251 C349.536,258.888 362.138,274.5806 370.455,287.5065 "
+      fill="none" id="_GroundTrack-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="373.11,291.7687,371.7468,282.0146,370.4665,287.5247,364.9564,286.2443,373.11,291.7687"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[54c1ab6490f5f88e3e78187cc91d1898]
+link _GroundTrack to three-->
+    <path
+      d="M176.521,175.032 C204.742,181.749 240.722,192.625 269.727,209 C289.462,220.141 286.833,234.223 307.727,243 C332.776,253.522 406.742,236.514 429.727,251 C442.61,259.1196 450.78,274.3881 455.637,287.0801 "
+      fill="none" id="_GroundTrack-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="457.4,291.9755,458.1154,282.1527,455.7066,287.271,450.5882,284.8621,457.4,291.9755"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[fa81c44a327ac22d2ef55c0c2866403d]
+link _GroundTrack to _util-->
+    <path d="M176.27,177.028 C229.32,189.598 313.969,209.656 354.953,219.367 " fill="none" id="_GroundTrack-&gt;_util"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="359.966,220.555,352.1307,214.5878,355.1007,219.4022,350.2863,222.3723,359.966,220.555"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[077a6ef15f1181f7c0b3b793c2558916]
+link HolographicMaterial to three-->
+    <path d="M541.294,242.235 C525.551,255.248 502.799,274.053 485.653,288.2244 " fill="none"
+      id="HolographicMaterial-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="481.423,291.7211,490.9084,289.0701,485.2768,288.5355,485.8114,282.904,481.423,291.7211"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[dcff0c4abbd9534a2f2545b455f5bfc5]
+link _Obstacle to cannon-es-->
+    <path
+      d="M730.059,182.023 C723.76,200.397 710.606,229.691 687.727,243 C662.936,257.422 455.541,238.5 429.727,251 C413.721,258.7505 401.065,274.612 392.776,287.6394 "
+      fill="none" id="_Obstacle-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="390.134,291.9329,398.2583,286.3655,392.7551,287.675,391.4456,282.1718,390.134,291.9329"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[46654491b3d8771c00094946a731cb9c]
+link _Obstacle to HolographicMaterial-->
+    <path d="M698.467,178.225 C670.738,187.574 632.408,200.496 603.062,210.39 " fill="none"
+      id="_Obstacle-&gt;HolographicMaterial" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="598.062,212.076,607.8683,212.991,602.8,210.4786,605.3124,205.4103,598.062,212.076"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[1d4612ec2104b95601384b4c2ec06325]
+link _Obstacle to three-->
+    <path
+      d="M738.981,182.141 C742.447,199.258 744.749,226.108 730.727,243 C700.283,279.6773 555.429,298.5477 491.809,305.1808 "
+      fill="none" id="_Obstacle-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="486.641,305.7114,496.0021,308.7725,491.6149,305.2014,495.1861,300.8143,486.641,305.7114"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[806ab7f80a292e6390fb6b96b75ba4d2]
+link _Obstacle to _util-->
+    <path d="M698.633,171.982 C626.05,184.011 464.137,210.845 402.856,221.001 " fill="none" id="_Obstacle-&gt;_util"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="397.588,221.874,407.1207,224.3494,402.5208,221.0569,405.8133,216.4569,397.588,221.874"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[4a7dd1bbe3b89a39609b9ea25c316c04]
+link _ObstacleManager to _Coin-->
+    <path d="M680.256,60.122 C703.907,70.019 733.649,82.464 754.989,91.393 " fill="none" id="_ObstacleManager-&gt;_Coin"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="759.681,93.356,752.9223,86.1922,755.0685,91.4261,749.8345,93.5723,759.681,93.356"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[e638dcf44fff6a58077cfa4071cff0c3]
+link _ObstacleManager to _Enemy-->
+    <path d="M648.832,60.122 C651.813,66.886 655.318,74.841 658.495,82.05 " fill="none" id="_ObstacleManager-&gt;_Enemy"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="660.631,86.897,660.6607,77.0482,658.6141,82.3218,653.3405,80.2752,660.631,86.897"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[5858c2bf621d7c173b069c9dc2190d79]
+link _ObstacleManager to HolographicMaterial-->
+    <path
+      d="M637.484,60.14 C629.024,91.768 609.829,160.677 597.727,182 C592.831,190.627 585.996,199.047 579.47,206.117 "
+      fill="none" id="_ObstacleManager-&gt;HolographicMaterial" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="575.891,209.899,584.9828,206.1122,579.3281,206.2677,579.1726,200.6129,575.891,209.899"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[3d50fff0bd6ba17a22734260a33233bc]
+link _ObstacleManager to _Obstacle-->
+    <path d="M672.038,60.012 C683.176,67.084 695.147,76.25 703.727,87 C716.925,103.536 725.18,126.43 729.822,142.951 "
+      fill="none" id="_ObstacleManager-&gt;_Obstacle" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="731.148,147.859,732.6612,138.1271,729.8434,143.0322,724.9383,140.2144,731.148,147.859"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[913ff1c60cab4b57cfe1cc298a2916e6]
+link _ObstacleManager to three-->
+    <path
+      d="M702.034,50.633 C751.309,57.251 815.8,69.043 834.727,87 C885.174,134.861 877.977,200.774 822.727,243 C770.599,282.8405 568.507,300.6569 491.636,306.0924 "
+      fill="none" id="_ObstacleManager-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="486.321,306.4625,495.577,309.828,491.3089,306.1154,495.0216,301.8473,486.321,306.4625"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[0a4fe409013e4e5e3ee976befae63d0b]
+link _ObstacleManager to _util-->
+    <path
+      d="M581.534,52.788 C524.372,64.412 440.434,90.602 393.727,148 C381.029,163.605 377.991,186.839 377.693,203.702 "
+      fill="none" id="_ObstacleManager-&gt;_util" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="377.68,208.715,381.7031,199.7253,377.6929,203.715,373.7032,199.7047,377.68,208.715"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[1c41a39e299746e0695719ea751f1b7d]
+link _Player to cannon-es-->
+    <path
+      d="M289.229,121.03 C284.737,128.828 280.006,138.543 277.727,148 C274.187,162.691 274.304,167.282 277.727,182 C284.572,211.427 284.739,223.396 307.727,243 C316.926,250.845 323.645,244.327 333.727,251 C347.947,260.4123 360.249,275.2435 368.838,287.4179 "
+      fill="none" id="_Player-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="371.831,291.7681,370.0256,282.0861,368.9971,287.6487,363.4346,286.6203,371.831,291.7681"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[d4283d1f2051e1c5b2b95d5774cefadc]
+link _Player to HolographicMaterial-->
+    <path
+      d="M326.906,107.82 C377.124,113.462 482.032,127.389 511.727,148 C531.6,161.793 544.903,186.745 552.367,204.505 "
+      fill="none" id="_Player-&gt;HolographicMaterial" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="554.318,209.309,554.6377,199.4653,552.4367,204.6764,547.2256,202.4754,554.318,209.309"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[ae1eff9dff14a265dc1f462678385017]
+link _Player to _Projectile-->
+    <path d="M327.093,114.611 C353.835,124.002 394.911,138.428 425.778,149.268 " fill="none"
+      id="_Player-&gt;_Projectile" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000" points="430.64,150.975,423.4739,144.2188,425.9225,149.3182,420.823,151.7668,430.64,150.975"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[b2b5eb14d7502219bbea425e842f5a98]
+link _Player to three-->
+    <path
+      d="M300.203,121.098 C302.086,151.397 311.041,216.246 352.727,243 C381.683,261.5837 400.974,232.105 429.727,251 C442.37,259.3081 450.523,274.4194 455.434,286.996 "
+      fill="none" id="_Player-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="457.221,291.8485,457.8635,282.0206,455.4927,287.1567,450.3566,284.7859,457.221,291.8485"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[ce1455b3025df52208a5dbff06b5f4d0]
+link _Player to _util-->
+    <path
+      d="M305.986,121.116 C312.635,137.26 324.063,162.45 337.727,182 C343.411,190.132 350.612,198.224 357.387,205.157 "
+      fill="none" id="_Player-&gt;_util" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="361.095,208.883,357.5818,199.6821,357.568,205.3389,351.9112,205.3252,361.095,208.883"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[03d30bb6826b3cd8eefdc18f6b0756a2]
+link _Projectile to cannon-es-->
+    <path d="M458.029,182.013 C442.351,207.9 411.454,258.9166 394.174,287.4486 " fill="none"
+      id="_Projectile-&gt;cannon-es" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="391.522,291.8275,399.6055,286.2011,394.112,287.5506,392.7625,282.0571,391.522,291.8275"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[4427ae01ee2244dc37261adbfdca44c9]
+link _Projectile to HolographicMaterial-->
+    <path d="M492.867,182.122 C505.091,189.962 519.81,199.401 532.322,207.425 " fill="none"
+      id="_Projectile-&gt;HolographicMaterial" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="536.823,210.311,531.4078,202.0845,532.6146,207.6111,527.088,208.8179,536.823,210.311"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[9206e23cbb1f05b7715cf57408fa063f]
+link _Projectile to three-->
+    <path d="M467.051,182.013 C465.966,207.687 463.837,258.0786 462.625,286.7396 " fill="none"
+      id="_Projectile-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="462.411,291.8275,466.7875,283.0044,462.6221,286.832,458.7946,282.6666,462.411,291.8275"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[a1ec3000c933711a5d98b661a4c03cab]
+link _util to cannon-es-->
+    <path d="M379.32,243.003 C379.781,255.458 380.426,272.8639 380.932,286.5291 " fill="none" id="_util-&gt;cannon-es"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="381.125,291.753,384.789,282.6111,380.9399,286.7564,376.7945,282.9073,381.125,291.753"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <!--MD5=[945475cf7aca474c1157e1a03c3c8f73]
+link _util to three-->
+    <path
+      d="M397.351,232.6 C407.808,236.466 420.558,242.466 429.727,251 C440.412,260.9451 448.438,275.2861 453.78,287.0949 "
+      fill="none" id="_util-&gt;three" style="stroke: #000000; stroke-width: 0.5;" />
+    <polygon fill="#000000"
+      points="455.905,291.9806,455.9838,282.1321,453.911,287.3954,448.6476,285.3225,455.905,291.9806"
+      style="stroke: #000000; stroke-width: 0.5;" />
+    <script type="text/plantuml"><![CDATA[MD5=[1d7ff0da6daefad08cff58f44ca66f8b]
+@startuml
+
+scale max 1920 width
+top to bottom direction
+
+skinparam nodesep 14
+skinparam ranksep 27
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam dpi 150
+skinparam arrowColor black
+skinparam arrowThickness 0.5
+skinparam packageTitleAlignment left
+
+skinparam usecase {
+  borderThickness 0.5
+}
+
+skinparam rectangle {
+  borderThickness 0.5
+}
+
+skinparam component {
+  borderThickness 1
+}
+
+
+(<b>BaseScene</b>)
+rectangle "Coin" as _Coin
+(<b>DeathScene</b>)
+rectangle "Enemy" as _Enemy
+rectangle "GroundTrack" as _GroundTrack
+(HolographicMaterial)
+rectangle "Obstacle" as _Obstacle
+rectangle "ObstacleManager" as _ObstacleManager
+rectangle "Player" as _Player
+rectangle "Projectile" as _Projectile
+rectangle "util" as _util
+
+package "Dependencies" {
+  [cannon-es]
+  [dat]
+  [three]
+}
+
+(<b>BaseScene</b>) --[thickness=1]> [cannon-es]
+(<b>BaseScene</b>) --[thickness=1]> [dat]
+(<b>BaseScene</b>) -[thickness=1]> _GroundTrack
+(<b>BaseScene</b>) -[thickness=1]> (HolographicMaterial)
+(<b>BaseScene</b>) -[thickness=1]> _ObstacleManager
+(<b>BaseScene</b>) -[thickness=1]> _Player
+(<b>BaseScene</b>) --[thickness=1]> [three]
+(<b>BaseScene</b>) -[thickness=1]> _util
+_Coin --> [cannon-es]
+_Coin --> _Obstacle
+_Coin --> [three]
+(<b>DeathScene</b>) --[thickness=1]> [cannon-es]
+(<b>DeathScene</b>) --[thickness=1]> [dat]
+(<b>DeathScene</b>) -[thickness=1]> _GroundTrack
+(<b>DeathScene</b>) -[thickness=1]> (HolographicMaterial)
+(<b>DeathScene</b>) -[thickness=1]> _ObstacleManager
+(<b>DeathScene</b>) -[thickness=1]> _Player
+(<b>DeathScene</b>) --[thickness=1]> [three]
+(<b>DeathScene</b>) -[thickness=1]> _util
+_Enemy --> [cannon-es]
+_Enemy --> (HolographicMaterial)
+_Enemy --> _Obstacle
+_Enemy --> _Projectile
+_Enemy --> [three]
+_Enemy --> _util
+_GroundTrack --> [cannon-es]
+_GroundTrack --> [three]
+_GroundTrack --> _util
+(HolographicMaterial) --> [three]
+_Obstacle --> [cannon-es]
+_Obstacle --> (HolographicMaterial)
+_Obstacle --> [three]
+_Obstacle --> _util
+_ObstacleManager --> _Coin
+_ObstacleManager --> _Enemy
+_ObstacleManager --> (HolographicMaterial)
+_ObstacleManager --> _Obstacle
+_ObstacleManager --> [three]
+_ObstacleManager --> _util
+_Player --> [cannon-es]
+_Player --> (HolographicMaterial)
+_Player --> _Projectile
+_Player --> [three]
+_Player --> _util
+_Projectile --> [cannon-es]
+_Projectile --> (HolographicMaterial)
+_Projectile --> [three]
+_util --> [cannon-es]
+_util --> [three]
+
+@enduml
+
+
+' View and edit on https://arkit.pro
+]]></script>
+  </g>
+</svg>
