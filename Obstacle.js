@@ -2,7 +2,7 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
 import HolographicMaterial from "./HolographicMaterial";
-import { randObstacleColor, painSound } from "./util";
+import { randObstacleColor } from "./util";
 
 export default class Obstacle {
     /* ---------------------------------------------------------------------------- */
@@ -48,7 +48,7 @@ export default class Obstacle {
         this.body = new CANNON.Body({
             mass: 1,
             type: CANNON.BODY_TYPES.KINEMATIC,
-            collisionFilterGroup: 4, // Enemy group (changed from 1)
+            collisionFilterGroup: 4, 
             collisionFilterMask: 1 | 2,
         });
 
@@ -57,16 +57,6 @@ export default class Obstacle {
 
         this.isColliding = false;
         this.shouldBeRemoved = false;
-
-        // const loader = new FBXLoader();
-        // loader.load('models/asteroid.fbx', (fbx) => {
-        //     fbx.scale.set(0.01, 0.01, 0.01);
-        //     fbx.position.copy(this.mesh.position);
-
-        //     this.mesh.parent.add(fbx);
-        //     this.mesh.parent.remove(this.mesh);
-        //     this.mesh = fbx;
-        // });
     }
     /* ---------------------------------------------------------------------------- */
 
@@ -80,22 +70,10 @@ export default class Obstacle {
      */
 
     handleCollision() {
-        // const currentTime = Date.now();
-
-        // if (currentTime - this.lastCollisionTime < this.collisionCooldown) {
-        //     return false;
-        // }
-
-        // this.isColliding = true;
-        // this.shouldBeRemoved = true;
-        // this.body.type = CANNON.BODY_TYPES.STATIC; // freeze physics
-        // this.body.collisionResponse = false; // disable further collisions
-        // return true;
-
         if (!this.isColliding) {
             this.isColliding = true;
             this.shouldBeRemoved = true;
-            this.body.collisionResponse = false; // disable further collisions
+            this.body.collisionResponse = false; 
 
             this.player.deductHealth(this);
 

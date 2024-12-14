@@ -34,6 +34,9 @@ export default class Player {
         this.meshScale = new THREE.Vector3(1, 1, 1);
         this.meshScaleFactor = 0.01;
 
+        const modelFilename = this.possibleModels[this.currentModelIndex];
+        const modelPath = `${PLAYER_MODELS_F_NAME_PREFIX}${modelFilename}`;
+
         this.loader.load(
             PLAYER_MODEL_PATH,
             (modelMesh) => {
@@ -56,15 +59,9 @@ export default class Player {
                 }
 
                 scene.add(this.mesh);
-
-                //console.log(this.mesh);
             },
 
             undefined,
-
-            (err) => {
-                //console.log(err);
-            }
         );
 
         // cannon.js-related initializations
@@ -72,7 +69,7 @@ export default class Player {
         this.body = new CANNON.Body({
             mass: 1,
             type: CANNON.BODY_TYPES.DYNAMIC,
-            collisionFilterGroup: 1,  // Player group
+            collisionFilterGroup: 1, 
             collisionFilterMask: 4 | 8
         });
 
@@ -114,26 +111,34 @@ export default class Player {
     }
 
     /* ---------------------------------------------------------------------------- */
+    
+    /*
+    *   Creates projectile with direction oriented towards front face of player. 
+    *   Not a deployed feature.
+    */
+   
     shoot() {
-
         const projectilePosition = new THREE.Vector3().copy(this.mesh.position);
-
-        // const yOffset = 3
-        // const temp = projectilePosition.y;
-        // projectilePosition.y = temp + yOffset;
         
+        // uses forwardVector (calculated in BaseScene)
         const projectile = new Projectile(projectilePosition, this.forwardVector, true);
 
+        // handles player projectile collisions
         projectile.body.addEventListener("collide", (event) => {
             projectile.mesh.visible = false;
             projectile.body.visible = false;
-            //console.log("KILLED ENEMY");
         });
 
         this.scene.add(projectile.mesh);
         this.world.addBody(projectile.body);
         this.projectiles.push(projectile);        
     }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /*
+    *   Updates projectiles, removes them if necessary
+    */
 
     updateProjectiles() {
         this.projectiles = this.projectiles.filter(projectile => {
@@ -148,6 +153,12 @@ export default class Player {
             return true;
         });
     }
+
+    /* ---------------------------------------------------------------------------- */
+
+    /*
+    *   Helper function to help with debugging. Vector visualizations
+    */
 
     displayVectors() {
         const xVector = new THREE.Vector3(1, 0, 0);
@@ -165,8 +176,14 @@ export default class Player {
         this.scene.add(zArrowHelper);
     }
 
+    /* ---------------------------------------------------------------------------- */
+
+    /*
+    *   Helper function to help with debugging
+    */ 
+
     displayWorld() {
-        //console.log(this.world);
+        console.log(this.world);
     }
 
     /* ---------------------------------------------------------------------------- */
@@ -182,8 +199,6 @@ export default class Player {
         }
 
         this.health--;
-
-        painSound();
 
         if (this.health == 0) {
             this.mesh.visible = false;

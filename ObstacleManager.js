@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 import Obstacle from "./Obstacle";
 import Enemy from "./Enemy";
 import Coin from "./Coin";
@@ -8,6 +6,12 @@ import { ASTEROID_MODEL_PATH, COIN_MODEL_PATH, coinSound, ENEMY_MODEL_PATH, pain
 
 import HolographicMaterial from "./HolographicMaterial";
 
+/* ---------------------------------------------------------------------------- */
+
+/*
+*   Obstacle manager class, managing spawning, movement, and removal of objects.
+*/
+
 export default class ObstacleManager {
     constructor(
         player,
@@ -15,8 +19,7 @@ export default class ObstacleManager {
         world,
         trackRadius,
         obstacleMaterial,
-        audioListener,
-        gameOver=false
+        audioListener
     ) {
         this.player = player;
         this.scene = scene;
@@ -25,19 +28,19 @@ export default class ObstacleManager {
         this.obstacleMaterial = obstacleMaterial;
         this.obstacles = [];
         this.minSpacing = Math.PI / 4;
-        this.maxObstacles = 2;
+        this.maxObstacles = 10;
         this.lastSpawnAngle = 0;
 
         this.lastSpawnTime = 0;
-        this.spawnCooldown = 2000; // 2 seconds between spawns
+        this.spawnCooldown = 2000; // seconds between spawns
         this.globalCollisionCooldown = 0;
-        this.globalCollisionCooldownDuration = 500; // 0.5 seconds global cooldown
+        this.globalCollisionCooldownDuration = 500; // global cooldown
 
         this.removalThreshold = Math.PI / 6;
         this.antiRemovalThreshold = 5 * this.removalThreshold;
 
         this.maxLateralOffset = 60; // make sure this is less than track radius
-        this.minForwardAngle = Math.PI / 4; // objects can only spawn at least 45 degrees in front of player
+        this.minForwardAngle = Math.PI / 4; 
         this.maxForwardAngle = Math.PI;
 
         // add obstacle type weights for spawning
@@ -69,20 +72,28 @@ export default class ObstacleManager {
         });
     }
 
-    // normalize angle to be between -PI and PI
+/* ---------------------------------------------------------------------------- */
+
+    // normalize angle to be between -pi and pi
     normalizeAngle(angle) {
         return Math.atan2(Math.sin(angle), Math.cos(angle));
     }
+
+/* ---------------------------------------------------------------------------- */
 
     // check if spawn attempt is too close to last spawn time
     canSpawnObstacle(currentTime) {
         return currentTime - this.lastSpawnTime >= this.spawnCooldown;
     }
 
+/* ---------------------------------------------------------------------------- */
+
     // get random lateral offset for object spawn
     getRandomOffset() {
         return (Math.random() - 0.5) * 2 * this.maxLateralOffset;
     }
+
+/* ---------------------------------------------------------------------------- */
 
     calculateSpawnPosition(angle) {
         // get base position on track
@@ -103,7 +114,9 @@ export default class ObstacleManager {
         return { x: finalX, y: -13.5, z: -finalZ };
     }
 
-    // Helper method to select obstacle type based on weights
+/* ---------------------------------------------------------------------------- */
+
+    // helper method to select obstacle type based on weights
     selectObstacleType() {
         const totalWeight = this.obstacleTypes.reduce(
             (sum, type) => sum + type.weight,
@@ -121,6 +134,8 @@ export default class ObstacleManager {
         return Obstacle;
     }
 
+/* ---------------------------------------------------------------------------- */
+
     spawnObstacle() {
         const currentTime = Date.now();
 
@@ -132,7 +147,6 @@ export default class ObstacleManager {
             return;
         }
 
-        // const angle = this.lastSpawnAngle + this.minSpacing;
         // calculate position of next object to be spawned relative to player
         const playerAngle = Math.atan2(
             -this.player.body.position.z,
@@ -144,7 +158,6 @@ export default class ObstacleManager {
         const spawnAngle = this.normalizeAngle(playerAngle + offset);
         const position = this.calculateSpawnPosition(spawnAngle);
 
-        // Select and create obstacle type
         const ObstacleType = this.selectObstacleType();
         const obstacle = new ObstacleType(
             position,
@@ -154,9 +167,8 @@ export default class ObstacleManager {
         );
         obstacle.body.material = this.obstacleMaterial;
 
-        obstacle.body.collisionFilterGroup = 4; // Same as enemies (changed from 1)
+        obstacle.body.collisionFilterGroup = 4; 
         obstacle.body.collisionFilterMask = 1 | 2;
-
 
         // apply the appropriate model based on obstacle type
         if (obstacle instanceof Enemy && this.shooterModel) {
@@ -205,6 +217,7 @@ export default class ObstacleManager {
                 });
             }
 
+            // replace the temporary mesh with the model
             obstacle.mesh = model;
         } else if (obstacle instanceof Obstacle && this.obstacleModel) {
             obstacle.isCoin = false;
@@ -244,6 +257,12 @@ export default class ObstacleManager {
                 !obstacle.isColliding &&
                 obstacle.handleCollision(currentTime)
             ) {
+                console.log(obstacle);
+                if (obstacle instanceof Coin) {
+                    console.log("COLLIDED INTO COIN");
+                } else {
+                    painSound();
+                }
                 this.globalCollisionCooldown =
                     currentTime + this.globalCollisionCooldownDuration;
             }
@@ -259,17 +278,13 @@ export default class ObstacleManager {
         // update last spawn information
         this.lastSpawnAngle = spawnAngle;
         this.lastSpawnTime = currentTime;
-
-        /*console.log(
-            "SPAWNED OBSTACLE: x: " +
-                position.x +
-                " z: " +
-                position.z
-        );*/
     }
+
+/* ---------------------------------------------------------------------------- */
 
     update(playerAngle, playerPosition) {
         this.obstacles = this.obstacles.filter(({ obstacle, angle }) => {
+            // checks for removal flag property in obstacle objects
             if (obstacle.shouldBeRemoved) {
                 if (obstacle instanceof Enemy) {
                     painSound();
@@ -290,13 +305,12 @@ export default class ObstacleManager {
             // calculate relative angle between player and obstacle
             let relativeAngle = this.normalizeAngle(playerAngle - angle);
 
-            // only remove if obstacle is behind player by more than threshold
+            // removes if obstacle is behind player by more than threshold
             // and accounting for angle wrapping
             if (
                 relativeAngle > this.removalThreshold &&
                 relativeAngle < this.antiRemovalThreshold
             ) {
-                //console.log("REMOVING OBSTACLE: ", relativeAngle);
                 if (obstacle instanceof Enemy) {
                     obstacle.cleanup(this.scene, this.world);
                 } else {
@@ -315,11 +329,13 @@ export default class ObstacleManager {
             return true;
         });
 
-        // Try to spawn new obstacles
+        // spawn obstacles at a 10% chance
         if (Math.random() < 0.1) {
             this.spawnObstacle();
         }
     }
+
+/* ---------------------------------------------------------------------------- */
 
     // remove all obstacles
     clear() {

@@ -3,6 +3,12 @@ import * as THREE from "three";
 
 import HolographicMaterial from "./HolographicMaterial";
 
+/* ---------------------------------------------------------------------------- */
+
+/*
+*   Class for all fired projectiles.
+*/
+
 export default class Projectile {
     constructor(position, direction, fromPlayer) {
         const geometry = new THREE.SphereGeometry(0.5);
@@ -26,12 +32,13 @@ export default class Projectile {
         this.body = new CANNON.Body({
             mass: 0.1,
             type: fromPlayer ? CANNON.BODY_TYPES.DYNAMIC : CANNON.BODY_TYPES.KINEMATIC,
-            collisionFilterGroup: fromPlayer ? 2 : 8,  // Group 2 for player projectiles, 8 for enemy
-            collisionFilterMask: fromPlayer ? 4 : 1    // Player projectiles hit enemies(4), Enemy projectiles hit player(1)
+            collisionFilterGroup: fromPlayer ? 2 : 8,  
+            collisionFilterMask: fromPlayer ? 4 : 1    
         });
         this.body.addShape(this.shape);
         this.body.position.copy(position);
         
+        // set velocity force towards direction
         const speed = 50;
         this.body.velocity.set(
             direction.x * speed,
@@ -39,13 +46,13 @@ export default class Projectile {
             direction.z * speed
         );
 
+        // cooldown handlerrs
         this.createdAt = Date.now();
         this.lifespan = 2500;
         this.hasHitEnemy = false;
-
-        ////console.log("Player projectile group:", this.body.collisionFilterGroup);
-        ////console.log("Collision mask:", this.body.collisionFilterMask);
     }
+
+    /* ---------------------------------------------------------------------------- */
 
     // checks lifespan of projectile 
     shouldRemove() {
