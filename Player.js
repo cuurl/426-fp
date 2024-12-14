@@ -34,9 +34,6 @@ export default class Player {
         this.meshScale = new THREE.Vector3(1, 1, 1);
         this.meshScaleFactor = 0.01;
 
-        const modelFilename = this.possibleModels[this.currentModelIndex];
-        const modelPath = `${PLAYER_MODELS_F_NAME_PREFIX}${modelFilename}`;
-
         this.loader.load(
             PLAYER_MODEL_PATH,
             (modelMesh) => {
@@ -186,6 +183,8 @@ export default class Player {
 
         this.health--;
 
+        painSound();
+
         if (this.health == 0) {
             this.mesh.visible = false;
             console.log('dead, redirecting to wall of shame');
@@ -206,6 +205,5 @@ export default class Player {
                 side: THREE.FrontSide,
             });
         }
-
     }
 }

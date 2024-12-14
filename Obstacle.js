@@ -2,7 +2,7 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 
 import HolographicMaterial from "./HolographicMaterial";
-import { randObstacleColor } from "./util";
+import { randObstacleColor, painSound } from "./util";
 
 export default class Obstacle {
     /* ---------------------------------------------------------------------------- */

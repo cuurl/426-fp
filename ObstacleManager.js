@@ -15,7 +15,8 @@ export default class ObstacleManager {
         world,
         trackRadius,
         obstacleMaterial,
-        audioListener
+        audioListener,
+        gameOver=false
     ) {
         this.player = player;
         this.scene = scene;
@@ -152,13 +153,10 @@ export default class ObstacleManager {
             false
         );
         obstacle.body.material = this.obstacleMaterial;
-        //console.log(ObstacleType);
 
         obstacle.body.collisionFilterGroup = 4; // Same as enemies (changed from 1)
         obstacle.body.collisionFilterMask = 1 | 2;
 
-        // const obstacle = new Obstacle(position);
-        // obstacle.body.material = this.obstacleMaterial;
 
         // apply the appropriate model based on obstacle type
         if (obstacle instanceof Enemy && this.shooterModel) {
@@ -246,13 +244,6 @@ export default class ObstacleManager {
                 !obstacle.isColliding &&
                 obstacle.handleCollision(currentTime)
             ) {
-                console.log(obstacle);
-                if (obstacle instanceof Coin) {
-                    console.log("COLLIDED INTO COIN");
-                } else {
-                    //painSound();
-                }
-                //console.log("COLLISION DETECTED");
                 this.globalCollisionCooldown =
                     currentTime + this.globalCollisionCooldownDuration;
             }
@@ -281,7 +272,7 @@ export default class ObstacleManager {
         this.obstacles = this.obstacles.filter(({ obstacle, angle }) => {
             if (obstacle.shouldBeRemoved) {
                 if (obstacle instanceof Enemy) {
-                    //painSound();
+                    painSound();
                     obstacle.cleanup(this.scene, this.world);
                 } else if (obstacle instanceof Coin) {
                     coinSound();

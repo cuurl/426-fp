@@ -26,7 +26,7 @@ export const PLAYER_HEALTH_FULL = 3;
 export const PLAYER_HEALTH_MED  = 2;
 export const PLAYER_HEALTH_NEAR_DEATH = 1;
 
-export const PLAYER_INVINCIBILITY_PERIOD = 5;   // 5 sec of invincibility on spawning
+export const PLAYER_INVINCIBILITY_PERIOD = 3;   // 3 sec of invincibility on spawning
 /* ------------------------------------------------------------------------------------------- */
 // Geometric, mathematical, or otherwise useful non-numeric constants.
 

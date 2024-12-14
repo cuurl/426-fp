@@ -61,7 +61,7 @@ class BaseScene {
     tStep = 0.001;
 
     score = 0;
-
+    gameOver = false;
     /* ---------------------------------------------------------------------------- */
 
     /**
@@ -74,6 +74,7 @@ class BaseScene {
 
         this.player = new Player(this.scene, this.listener);
         this.player.isInvincible = true; // prevent color change b4 animate() runs
+        this.gameOver = false;
 
         this.cannonInit(); // cannonJS-related initializations (for physics)
         this.inputInit(); // player event listeners
@@ -378,6 +379,10 @@ class BaseScene {
      * the result as the next frame.
      */
     animate() {
+        if (this.gameOver || this.player.health <= 0) {
+            document.location.replace("./death.html");
+        }
+
         requestAnimationFrame(this.animate);
 
         if (this.inGame) {
@@ -394,7 +399,7 @@ class BaseScene {
         }
 
         if (this.player.health <= 0) {
-            document.location.replace("./death.html");
+            this.gameOver = true;
         }
 
         this.t += this.tStep;
