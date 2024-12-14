@@ -35,10 +35,20 @@ export const GRAVITY       = new Vec3(0, -9.81, 0);
 
 export const PLAYER_MODELS_F_NAME_PREFIX = 'models/Player/';
 
-// TODO auto-scan models/ dir for each model category
 export const PLAYER_MODELS = ['ufo1.fbx', 'ufo2.fbx', 'ufo3.fbx', 'ufo4.fbx'];
-
 export const DEFAULT_PLAYER_MODEL_INDEX = 0;
+
+export const BG_MUSIC_PATH   = 'song.mp3';
+export const PAIN_SOUND_PATH = 'pain.ogg';
+export const COIN_SOUND_PATH = 'coin.ogg';
+export const FIRE_SOUND_PATH = 'fire.ogg';
+
+export const EARTH_MODEL_PATH = "models/Environment/earth.glb";
+export const ENEMY_MODEL_PATH = "models/Enemy/enemy.fbx";
+export const PLAYER_MODEL_PATH = "models/Player/player.fbx";
+export const ASTEROID_MODEL_PATH = "models/Obstacle/asteroid.fbx";
+export const COIN_MODEL_PATH = "models/Obstacle/coin.glb";
+
 /* ------------------------------------------------------------------------------------------- */
 // Useful functions.
 
@@ -56,7 +66,7 @@ export function randObstacleColor() {
 
 // Positions and orients the camera towards the player mesh.
 // This is meant to be used each frame.
-export function orientCameraTowardsPlayer(camera, player, lookAtVec) {
+export function orientCameraTowardsPlayer(camera, player) {
     const playerPosition = new Vector3();
     player.mesh.getWorldPosition(playerPosition);
 
@@ -103,7 +113,7 @@ let sound = new Audio(audioListener);
 let audioLoader = new AudioLoader();
 
 export function bgMusic() {
-    audioLoader.load("public/song.mp3", function (buffer) {
+    audioLoader.load(BG_MUSIC_PATH, function (buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(false);
         sound.setVolume(0.5);
@@ -112,7 +122,7 @@ export function bgMusic() {
 }
 
 export function painSound() {
-    audioLoader.load("public/pain.ogg", function (buffer) {
+    audioLoader.load(PAIN_SOUND_PATH, function (buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(false);
         sound.setVolume(0.5);
@@ -121,7 +131,7 @@ export function painSound() {
 }
 
 export function coinSound() {
-    audioLoader.load("public/coin.ogg", function (buffer) {
+    audioLoader.load(COIN_SOUND_PATH, function (buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(false);
         sound.setVolume(0.5);

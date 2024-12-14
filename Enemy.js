@@ -6,9 +6,9 @@ import Projectile from "./Projectile";
 import HolographicMaterial from "./HolographicMaterial";
 
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-// import { threeToCannon, ShapeType } from 'three-to-cannon';
+import { ENEMY_MODEL_PATH } from "./util";
 
-const mesh = await new FBXLoader().loadAsync("models/enemy.fbx");
+const mesh = await new FBXLoader().loadAsync(ENEMY_MODEL_PATH);
 
 export default class Enemy extends Obstacle {
     constructor(position = { x: 0, y: -13.5, z: 0 }, player, audioListener) {

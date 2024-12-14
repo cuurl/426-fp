@@ -9,6 +9,7 @@ import {
     GRAVITY,
     TRACK_LANE_Y_POS,
     CAMERA_OFFSET,
+    PLAYER_MODEL_PATH,
 } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
@@ -24,7 +25,7 @@ import Player from "./Player";
 import GroundTrack from "./GroundTrack";
 import ObstacleManager from "./ObstacleManager";
 
-let earthIsDeadMesh = await new FBXLoader().loadAsync("models/Player/ufo2.fbx");
+let earthIsDeadMesh = await new FBXLoader().loadAsync(PLAYER_MODEL_PATH);
 
 class DeathScene {
     /* ---------------------------------------------------------------------------- */

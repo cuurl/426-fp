@@ -5,7 +5,7 @@ import Projectile from "./Projectile";
 
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
-import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
+import randRanged, { PLAYER_MODEL_PATH, PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
 import { healthToShipColor } from "./util";
 import { DEFAULT_PLAYER_MODEL_INDEX, painSound } from "./util";
 
@@ -38,7 +38,7 @@ export default class Player {
         const modelPath = `${PLAYER_MODELS_F_NAME_PREFIX}${modelFilename}`;
 
         this.loader.load(
-            modelPath,
+            PLAYER_MODEL_PATH,
             (modelMesh) => {
                 modelMesh.scale.copy(this.initialMeshScale.clone().multiplyScalar(this.initialMeshScaleFactor));
 

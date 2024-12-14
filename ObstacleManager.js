@@ -4,7 +4,7 @@ import Obstacle from "./Obstacle";
 import Enemy from "./Enemy";
 import Coin from "./Coin";
 import { FBXLoader, GLTFLoader } from "three/examples/jsm/Addons.js";
-import { coinSound, painSound } from "./util";
+import { ASTEROID_MODEL_PATH, COIN_MODEL_PATH, coinSound, ENEMY_MODEL_PATH, painSound } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
 
@@ -51,19 +51,19 @@ export default class ObstacleManager {
 
         this.obstacleModel = null;
         const obstacleLoader = new FBXLoader();
-        obstacleLoader.load("models/asteroid.fbx", (fbx) => {
+        obstacleLoader.load(ASTEROID_MODEL_PATH, (fbx) => {
             this.obstacleModel = fbx;
         });
 
         this.shooterModel = null;
         const shooterLoader = new FBXLoader();
-        shooterLoader.load("models/enemy.fbx", (fbx) => {
+        shooterLoader.load(ENEMY_MODEL_PATH, (fbx) => {
             this.shooterModel = fbx;
         });
 
         this.coinModel = null;
         const coinLoader = new GLTFLoader();
-        coinLoader.load("models/coin.glb", (model) => {
+        coinLoader.load(COIN_MODEL_PATH, (model) => {
             this.coinModel = model;
         });
     }

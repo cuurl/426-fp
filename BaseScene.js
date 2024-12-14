@@ -11,6 +11,8 @@ import {
     CAMERA_OFFSET,
     PLAYER_INVINCIBILITY_PERIOD,
     initAudio,
+    bgMusic,
+    EARTH_MODEL_PATH,
 } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
@@ -29,10 +31,7 @@ import Player from "./Player";
 import GroundTrack from "./GroundTrack";
 import ObstacleManager from "./ObstacleManager";
 
-let songUrl = "public/song.mp3";
-
-let earthMesh = await new GLTFLoader().loadAsync("models/earth_hologram.glb");
-//console.log(earthMesh);
+let earthMesh = await new GLTFLoader().loadAsync(EARTH_MODEL_PATH);
 
 class BaseScene {
     /* ---------------------------------------------------------------------------- */
@@ -51,6 +50,8 @@ class BaseScene {
 
     audio = null;
     listener = null;
+
+    mixer = null;
     /* ---------------------------------------------------------------------------- */
     // cannon.js related declarations (+ general collision handling)
     world = null;
@@ -186,12 +187,32 @@ class BaseScene {
             this.laneObjects.push(lane);
         }
 
+        this.mixer = new THREE.AnimationMixer(earthMesh.scene);
+        this.mixer.clipAction(earthMesh.animations[0]).play();
+
+        console.log(earthMesh);
+
         earthMesh = earthMesh.scene;
 
         earthMesh.position.set(0, -13.9, 0);
         earthMesh.scale.set(25, 25, 25);
         earthMesh.visible = true;
-        earthMesh.receiveShadow = true;
+
+        earthMesh.traverse((obj) => {
+            if (obj.material) {
+                obj.material = new HolographicMaterial({
+                    fresnelAmount: 0.3,
+                    fresnelOpacity: 0.3,
+                    hologramBrightness: 0.1,
+                    scanlineSize: 2,
+                    signalSpeed: 2.3,
+                    hologramColor: "#89CFF0",
+                    hologramOpacity: 0.4,
+                    enableBlinking: true,
+                });
+            }
+        });
+
         this.scene.add(earthMesh);
 
         // initially, player is placed on the middle lane
@@ -211,17 +232,8 @@ class BaseScene {
         this.composer.addPass(renderPass);
         this.composer.addPass(bloomPass);
 
-        //console.log(coin);
-
-        this.audioLoader = new THREE.AudioLoader();
-        this.listener = new THREE.AudioListener();
-        this.camera.add(this.listener);
-
-        this.audioLoader.load(songUrl, (buffer) => {
-            this.audio = new Audio(this.listener);
-            this.audio.setBuffer(buffer);
-            this.audio.setVolume(0.5);
-        });
+        // handle background audio
+        bgMusic();
     }
 
     /* ---------------------------------------------------------------------------- */
@@ -379,21 +391,15 @@ class BaseScene {
 
         if (this.inGame) {
             this.timer.update();
-            //console.log(this.timer);
 
-            // console.log(
-            //     `this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD: ${
-            //         this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD
-            //     }`
-            // );
             if (this.timer.getElapsed() > PLAYER_INVINCIBILITY_PERIOD) {
                 this.player.isInvincible = false;
             }
+        }
 
-            // console.log(`getElapsed: ${this.timer.getElapsed()}`);
-            // console.log(`invinc_pd: ${PLAYER_INVINCIBILITY_PERIOD}`);
-
-            // console.log(this.player);
+        // not in game => in initial splash screen animation
+        else {
+            this.camera.lookAt(earthMesh.position);
         }
 
         if (this.player.health <= 0) {
@@ -439,6 +445,11 @@ class BaseScene {
             orientCameraTowardsPlayer(this.camera, this.player);
         }
 
+        // animation step
+        if (this.mixer) {
+            this.mixer.update(1 / 60);
+        }
+
         // three -> cannon
         this.player.body.position.copy(this.player.mesh.position);
         this.player.body.quaternion.copy(this.player.mesh.quaternion);
@@ -459,9 +470,11 @@ class BaseScene {
         // change score text
         if (this.inGame) {
             document.getElementById("score").innerHTML = this.score;
-            document.getElementById("coins").innerHTML = "Coins: " + this.player.coins;
+            document.getElementById("coins").innerHTML =
+                "Coins: " + this.player.coins;
         } else {
             document.getElementById("score").innerHTML = "Press Enter to play.";
+            document.getElementById("coins").innerHTML = "";
         }
 
         this.composer.render();
