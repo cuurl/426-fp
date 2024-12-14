@@ -5,13 +5,13 @@ import Projectile from "./Projectile";
 
 import HolographicMaterial from "./HolographicMaterial";
 
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 // import { threeToCannon, ShapeType } from 'three-to-cannon';
 
-const mesh = await new FBXLoader().loadAsync('models/enemy.fbx');
+const mesh = await new FBXLoader().loadAsync("models/enemy.fbx");
 
 export default class Enemy extends Obstacle {
-    constructor(position = { x: 0, y: -13.5, z: 0 }, player) {
+    constructor(position = { x: 0, y: -13.5, z: 0 }, player, audioListener) {
         // call parent constructor first
         super(position);
 
@@ -20,12 +20,12 @@ export default class Enemy extends Obstacle {
         this.lastShotTime = 0;
         this.shootingCooldown = 2000;
         this.shootingRange = 100;
-        
+
         // store initial position for oscillation
         this.basePosition = {
             x: position.x,
             y: position.y,
-            z: position.z
+            z: position.z,
         };
         // this.movementRadius = 5;
         // this.movementSpeed = 1;
@@ -36,7 +36,7 @@ export default class Enemy extends Obstacle {
         this.movementDirection = 1; // 1 for right, -1 for left
         this.currentOffset = 0; // current lateral offset from base position
 
-        this.body.collisionFilterGroup = 4;  // Enemy group (changed from 1)
+        this.body.collisionFilterGroup = 4; // Enemy group (changed from 1)
         this.body.collisionFilterMask = 1 | 2;
 
         this.player = player;
@@ -68,7 +68,10 @@ export default class Enemy extends Obstacle {
     isFrontOfPlayer(playerPosition) {
         // calculate angles of player and enemy relative to center
         const playerAngle = Math.atan2(-playerPosition.z, playerPosition.x);
-        const enemyAngle = Math.atan2(-this.mesh.position.z, this.mesh.position.x);
+        const enemyAngle = Math.atan2(
+            -this.mesh.position.z,
+            this.mesh.position.x
+        );
 
         let angleDiff = this.normalizeAngle(enemyAngle - playerAngle);
 
@@ -80,12 +83,14 @@ export default class Enemy extends Obstacle {
         if (this.isColliding || this.shouldBeRemoved) return;
 
         // update lateral movement
-        this.currentOffset += this.movementDirection * this.movementSpeed * deltaTime;
+        this.currentOffset +=
+            this.movementDirection * this.movementSpeed * deltaTime;
 
         // change direction when reaching movement limits
         if (Math.abs(this.currentOffset) >= this.movementDistance) {
             this.movementDirection *= -1;
-            this.currentOffset = Math.sign(this.currentOffset) * this.movementDistance;
+            this.currentOffset =
+                Math.sign(this.currentOffset) * this.movementDistance;
         }
 
         // calculate perpendicular direction for lateral movement
@@ -96,7 +101,7 @@ export default class Enemy extends Obstacle {
         // update position with lateral movement
         const newX = this.basePosition.x + perpX * this.currentOffset;
         const newZ = this.basePosition.z + perpZ * this.currentOffset;
-        
+
         this.mesh.position.set(newX, this.basePosition.y, newZ);
         this.body.position.set(newX, this.basePosition.y, newZ);
 
@@ -116,7 +121,7 @@ export default class Enemy extends Obstacle {
         this.updateProjectiles(scene, world);
     }
 
-    // creates new projectile 
+    // creates new projectile
     shoot(direction, scene, world) {
         const projectilePosition = new THREE.Vector3(
             this.mesh.position.x,
@@ -130,7 +135,8 @@ export default class Enemy extends Obstacle {
             if (event.body === this.player.body) {
                 projectile.mesh.visible = false;
                 projectile.body.visible = false;
-                this.player.deductHealth();
+
+                this.player.deductHealth(this);
                 //console.log("PLAYER HIT");
             }
         });
@@ -139,10 +145,24 @@ export default class Enemy extends Obstacle {
         world.addBody(projectile.body);
         this.projectiles.push(projectile);
         this.lastShotTime = Date.now();
+
+        if (this.audioListener != null) {
+            // create a global audio source
+            const sound = new THREE.Audio(this.audioListener);
+
+            // play shooting sound
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load("public/fire.ogg", function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setLoop(false);
+                sound.setVolume(0.5);
+                sound.play();
+            });
+        }
     }
 
     updateProjectiles(scene, world) {
-        this.projectiles = this.projectiles.filter(projectile => {
+        this.projectiles = this.projectiles.filter((projectile) => {
             if (projectile.shouldRemove()) {
                 scene.remove(projectile.mesh);
                 world.removeBody(projectile.body);
@@ -157,7 +177,7 @@ export default class Enemy extends Obstacle {
 
     // remove all projectiles associated with enemy when removed
     cleanup(scene, world) {
-        this.projectiles.forEach(projectile => {
+        this.projectiles.forEach((projectile) => {
             scene.remove(projectile.mesh);
             world.removeBody(projectile.body);
         });

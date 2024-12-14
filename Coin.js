@@ -3,10 +3,9 @@ import * as THREE from "three";
 import Obstacle from "./Obstacle";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
-
 export default class Coin extends Obstacle {
     constructor(position = { x: 0, y: -13.5, z: 0 }, player) {
-        super(position, player);
+        super(position, player, true);
 
         this.isCoin = true;
 

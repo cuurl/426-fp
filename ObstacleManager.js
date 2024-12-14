@@ -1,12 +1,22 @@
+import * as THREE from 'three';
+
 import Obstacle from "./Obstacle";
 import Enemy from "./Enemy";
 import Coin from "./Coin";
 import { FBXLoader, GLTFLoader } from "three/examples/jsm/Addons.js";
+import { coinSound, painSound } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
 
 export default class ObstacleManager {
-    constructor(player, scene, world, trackRadius, obstacleMaterial) {
+    constructor(
+        player,
+        scene,
+        world,
+        trackRadius,
+        obstacleMaterial,
+        audioListener
+    ) {
         this.player = player;
         this.scene = scene;
         this.world = world;
@@ -31,10 +41,13 @@ export default class ObstacleManager {
 
         // add obstacle type weights for spawning
         this.obstacleTypes = [
-            { type: Obstacle, weight: 0.5 },
-            { type: Enemy, weight: 0.0 },
-            { type: Coin, weight: 0.5 }
+            { type: Obstacle, weight: 0.33 },
+            { type: Enemy, weight: 0.33 },
+            { type: Coin, weight: 0.33 },
         ];
+
+        // for audio (enemy shooting sounds)
+        this.audioListener = audioListener;
 
         this.obstacleModel = null;
         const obstacleLoader = new FBXLoader();
@@ -52,7 +65,7 @@ export default class ObstacleManager {
         const coinLoader = new GLTFLoader();
         coinLoader.load("models/coin.glb", (model) => {
             this.coinModel = model;
-        })
+        });
     }
 
     // normalize angle to be between -PI and PI
@@ -132,11 +145,16 @@ export default class ObstacleManager {
 
         // Select and create obstacle type
         const ObstacleType = this.selectObstacleType();
-        const obstacle = new ObstacleType(position, this.player);
+        const obstacle = new ObstacleType(
+            position,
+            this.player,
+            this.audioListener,
+            false
+        );
         obstacle.body.material = this.obstacleMaterial;
         //console.log(ObstacleType);
 
-        obstacle.body.collisionFilterGroup = 4;  // Same as enemies (changed from 1)
+        obstacle.body.collisionFilterGroup = 4; // Same as enemies (changed from 1)
         obstacle.body.collisionFilterMask = 1 | 2;
 
         // const obstacle = new Obstacle(position);
@@ -144,6 +162,9 @@ export default class ObstacleManager {
 
         // apply the appropriate model based on obstacle type
         if (obstacle instanceof Enemy && this.shooterModel) {
+            obstacle.audioListener = this.audioListener;
+            obstacle.isCoin = false;
+
             const model = this.shooterModel.clone();
             model.scale.set(0.003, 0.003, 0.003);
             model.position.copy(obstacle.mesh.position);
@@ -162,14 +183,13 @@ export default class ObstacleManager {
                 });
             }
 
-
             // replace the temporary mesh with the model
             obstacle.mesh = model;
         } else if (obstacle instanceof Coin && this.coinModel) {
-            //console.log("ATTEMPTING TO RENDER COIN");
-            //console.log(obstacle);
+            obstacle.isCoin = true;
+            
             const model = this.coinModel.scene.clone();
-            console.log(model)
+
             model.scale.set(0.25, 0.25, 0.25);
             model.position.copy(obstacle.mesh.position);
 
@@ -189,6 +209,8 @@ export default class ObstacleManager {
 
             obstacle.mesh = model;
         } else if (obstacle instanceof Obstacle && this.obstacleModel) {
+            obstacle.isCoin = false;
+
             const model = this.obstacleModel.clone();
             model.scale.set(0.02, 0.02, 0.02);
             model.position.copy(obstacle.mesh.position);
@@ -225,10 +247,10 @@ export default class ObstacleManager {
                 obstacle.handleCollision(currentTime)
             ) {
                 console.log(obstacle);
-                if (obstacle.isCoin) {
+                if (obstacle instanceof Coin) {
                     console.log("COLLIDED INTO COIN");
                 } else {
-                    console.log("COLLIDED WITH OBSTACLE");
+                    painSound();
                 }
                 //console.log("COLLISION DETECTED");
                 this.globalCollisionCooldown =
@@ -247,13 +269,6 @@ export default class ObstacleManager {
         this.lastSpawnAngle = spawnAngle;
         this.lastSpawnTime = currentTime;
 
-        console.log('New obstacle!')
-        console.log(obstacle);
-
-        console.log(`obstacle instanceof Enemy: ${obstacle instanceof Enemy}`)
-        console.log(`obstacle instanceof Obstacle: ${obstacle instanceof Obstacle}`)
-        console.log(`obstacle instanceof Coin: ${obstacle instanceof Coin}`)
-
         /*console.log(
             "SPAWNED OBSTACLE: x: " +
                 position.x +
@@ -266,7 +281,14 @@ export default class ObstacleManager {
         this.obstacles = this.obstacles.filter(({ obstacle, angle }) => {
             if (obstacle.shouldBeRemoved) {
                 if (obstacle instanceof Enemy) {
+                    painSound();
                     obstacle.cleanup(this.scene, this.world);
+                } else if (obstacle instanceof Coin) {
+                    coinSound();
+                    this.player.coins++;
+
+                    this.scene.remove(obstacle.mesh);
+                    this.world.removeBody(obstacle.body);
                 } else {
                     this.scene.remove(obstacle.mesh);
                     this.world.removeBody(obstacle.body);

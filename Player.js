@@ -7,13 +7,14 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
 import randRanged, { PLAYER_MODELS, PLAYER_MODELS_F_NAME_PREFIX } from "./util";
 import { healthToShipColor } from "./util";
-import { DEFAULT_PLAYER_MODEL_INDEX } from "./util";
+import { DEFAULT_PLAYER_MODEL_INDEX, painSound } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
 
 export default class Player {
     currentModelIndex = DEFAULT_PLAYER_MODEL_INDEX;
     possibleModels = PLAYER_MODELS;
+    coins = 0;
 
     /* ---------------------------------------------------------------------------- */
 
@@ -178,8 +179,8 @@ export default class Player {
      * the player model. When the player reaches 0 health (after spawning with 
      * 3 hit-points), nothing happens yet, because I don't know wtf to do.
      */
-    deductHealth() {
-        if (this.isInvincible) {
+    deductHealth(collidingObstacle) {
+        if (this.isInvincible || collidingObstacle.isCoin) {
             return;
         }
 
@@ -205,5 +206,6 @@ export default class Player {
                 side: THREE.FrontSide,
             });
         }
+
     }
 }

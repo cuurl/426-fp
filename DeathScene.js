@@ -62,7 +62,7 @@ class DeathScene {
     constructor() {
         this.threeInit(); // threeJS-related initializations & lane logic setup
 
-        this.player = new Player(this.scene);
+        this.player = new Player(this.scene, null);
 
         this.cannonInit(); // cannonJS-related initializations (for physics)
         this.inputInit(); // player event listeners

@@ -1,6 +1,9 @@
 import { Vector3 } from "three";
 import { Vec3 } from "cannon-es";
 
+import { Audio, AudioLoader, AudioListener } from "three";
+
+
 /* ------------------------------------------------------------------------------------------- */
 // Numerical constants.
 
@@ -87,4 +90,41 @@ export function healthToShipColor(playerHealth) {
     }
 
     return color;
+}
+
+// see below
+
+export function initAudio() {
+    return new AudioListener();
+}
+
+let audioListener = initAudio();
+let sound = new Audio(audioListener);
+let audioLoader = new AudioLoader();
+
+export function bgMusic() {
+    audioLoader.load("public/song.mp3", function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(false);
+        sound.setVolume(0.5);
+        sound.play();
+    });
+}
+
+export function painSound() {
+    audioLoader.load("public/pain.ogg", function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(false);
+        sound.setVolume(0.5);
+        sound.play();
+    });
+}
+
+export function coinSound() {
+    audioLoader.load("public/coin.ogg", function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(false);
+        sound.setVolume(0.5);
+        sound.play();
+    });
 }

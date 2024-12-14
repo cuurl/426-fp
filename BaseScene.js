@@ -10,6 +10,7 @@ import {
     TRACK_LANE_Y_POS,
     CAMERA_OFFSET,
     PLAYER_INVINCIBILITY_PERIOD,
+    initAudio,
 } from "./util";
 
 import HolographicMaterial from "./HolographicMaterial";
@@ -47,6 +48,9 @@ class BaseScene {
     laneObjects = []; // for varying lane colors later
 
     composer = null; // post-processing
+
+    audio = null;
+    listener = null;
     /* ---------------------------------------------------------------------------- */
     // cannon.js related declarations (+ general collision handling)
     world = null;
@@ -60,6 +64,7 @@ class BaseScene {
     tStep = 0.001;
 
     score = 0;
+
     /* ---------------------------------------------------------------------------- */
 
     /**
@@ -70,7 +75,9 @@ class BaseScene {
     constructor(debug = false) {
         this.threeInit(); // threeJS-related initializations & lane logic setup
 
-        this.player = new Player(this.scene);
+        initAudio();
+
+        this.player = new Player(this.scene, this.listener);
         this.player.isInvincible = true; // prevent color change b4 animate() runs
 
         this.cannonInit(); // cannonJS-related initializations (for physics)
@@ -255,7 +262,8 @@ class BaseScene {
             this.scene,
             this.world,
             this.currentLane.xRadius,
-            obstacleMaterial
+            obstacleMaterial,
+            this.listener
         );
     }
 
@@ -451,6 +459,7 @@ class BaseScene {
         // change score text
         if (this.inGame) {
             document.getElementById("score").innerHTML = this.score;
+            document.getElementById("coins").innerHTML = "Coins: " + this.player.coins;
         } else {
             document.getElementById("score").innerHTML = "Press Enter to play.";
         }
