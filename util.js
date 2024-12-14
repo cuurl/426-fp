@@ -43,11 +43,11 @@ export const PAIN_SOUND_PATH = 'pain.ogg';
 export const COIN_SOUND_PATH = 'coin.ogg';
 export const FIRE_SOUND_PATH = 'fire.ogg';
 
-export const EARTH_MODEL_PATH = "models/Environment/earth.glb";
-export const ENEMY_MODEL_PATH = "models/Enemy/enemy.fbx";
-export const PLAYER_MODEL_PATH = "models/Player/player.fbx";
-export const ASTEROID_MODEL_PATH = "models/Obstacle/asteroid.fbx";
-export const COIN_MODEL_PATH = "models/Obstacle/coin.glb";
+export const EARTH_MODEL_PATH = "earth.glb";
+export const ENEMY_MODEL_PATH = "enemy.fbx";
+export const PLAYER_MODEL_PATH = "player.fbx";
+export const ASTEROID_MODEL_PATH = "asteroid.fbx";
+export const COIN_MODEL_PATH = "coin.glb";
 
 /* ------------------------------------------------------------------------------------------- */
 // Useful functions.
