@@ -10,7 +10,6 @@ import {
     TRACK_LANE_Y_POS,
     CAMERA_OFFSET,
     PLAYER_INVINCIBILITY_PERIOD,
-    initAudio,
     bgMusic,
     EARTH_MODEL_PATH,
 } from "./util";
@@ -22,9 +21,6 @@ import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelated
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-
-import { Audio, AudioListener } from "three";
-
 import { Timer } from "three/examples/jsm/Addons.js";
 
 import Player from "./Player";
@@ -75,8 +71,6 @@ class BaseScene {
 
     constructor(debug = false) {
         this.threeInit(); // threeJS-related initializations & lane logic setup
-
-        initAudio();
 
         this.player = new Player(this.scene, this.listener);
         this.player.isInvincible = true; // prevent color change b4 animate() runs
@@ -231,9 +225,6 @@ class BaseScene {
 
         this.composer.addPass(renderPass);
         this.composer.addPass(bloomPass);
-
-        // handle background audio
-        bgMusic();
     }
 
     /* ---------------------------------------------------------------------------- */
@@ -365,7 +356,7 @@ class BaseScene {
                     this.player.health = 3;
                     this.timer = new Timer();
 
-                    this.audio.play();
+                    bgMusic();
 
                     break;
 
@@ -479,8 +470,6 @@ class BaseScene {
 
         this.composer.render();
     }
-
-    /* ---------------------------------------------------------------------------- */
 
     /* ---------------------------------------------------------------------------- */
 }

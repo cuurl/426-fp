@@ -6,7 +6,7 @@ import Projectile from "./Projectile";
 import HolographicMaterial from "./HolographicMaterial";
 
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-import { ENEMY_MODEL_PATH } from "./util";
+import { ENEMY_MODEL_PATH, fireSound } from "./util";
 
 const mesh = await new FBXLoader().loadAsync(ENEMY_MODEL_PATH);
 
@@ -146,19 +146,7 @@ export default class Enemy extends Obstacle {
         this.projectiles.push(projectile);
         this.lastShotTime = Date.now();
 
-        if (this.audioListener != null) {
-            // create a global audio source
-            const sound = new THREE.Audio(this.audioListener);
-
-            // play shooting sound
-            const audioLoader = new THREE.AudioLoader();
-            audioLoader.load("public/fire.ogg", function (buffer) {
-                sound.setBuffer(buffer);
-                sound.setLoop(false);
-                sound.setVolume(0.5);
-                sound.play();
-            });
-        }
+        fireSound();
     }
 
     updateProjectiles(scene, world) {

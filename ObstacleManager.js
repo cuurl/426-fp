@@ -250,7 +250,7 @@ export default class ObstacleManager {
                 if (obstacle instanceof Coin) {
                     console.log("COLLIDED INTO COIN");
                 } else {
-                    painSound();
+                    //painSound();
                 }
                 //console.log("COLLISION DETECTED");
                 this.globalCollisionCooldown =
@@ -281,7 +281,7 @@ export default class ObstacleManager {
         this.obstacles = this.obstacles.filter(({ obstacle, angle }) => {
             if (obstacle.shouldBeRemoved) {
                 if (obstacle instanceof Enemy) {
-                    painSound();
+                    //painSound();
                     obstacle.cleanup(this.scene, this.world);
                 } else if (obstacle instanceof Coin) {
                     coinSound();

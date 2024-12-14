@@ -38,7 +38,7 @@ export const PLAYER_MODELS_F_NAME_PREFIX = 'models/Player/';
 export const PLAYER_MODELS = ['ufo1.fbx', 'ufo2.fbx', 'ufo3.fbx', 'ufo4.fbx'];
 export const DEFAULT_PLAYER_MODEL_INDEX = 0;
 
-export const BG_MUSIC_PATH   = 'song.mp3';
+export const BG_MUSIC_PATH   = 'song.ogg';
 export const PAIN_SOUND_PATH = 'pain.ogg';
 export const COIN_SOUND_PATH = 'coin.ogg';
 export const FIRE_SOUND_PATH = 'fire.ogg';
@@ -48,6 +48,20 @@ export const ENEMY_MODEL_PATH = "enemy.fbx";
 export const PLAYER_MODEL_PATH = "player.fbx";
 export const ASTEROID_MODEL_PATH = "asteroid.fbx";
 export const COIN_MODEL_PATH = "coin.glb";
+
+let audioListener = initAudio();
+let sound = new Audio(audioListener);
+let audioLoader = new AudioLoader();
+
+const BG_AUDIO = await audioLoader.loadAsync(BG_MUSIC_PATH);
+const FIRE_AUDIO = await audioLoader.loadAsync(FIRE_SOUND_PATH);
+const COIN_AUDIO = await audioLoader.loadAsync(COIN_SOUND_PATH);
+const PAIN_AUDIO = await audioLoader.loadAsync(PAIN_SOUND_PATH);
+
+console.log(BG_AUDIO)
+console.log(FIRE_AUDIO)
+console.log(COIN_AUDIO)
+console.log(PAIN_AUDIO)
 
 /* ------------------------------------------------------------------------------------------- */
 // Useful functions.
@@ -103,34 +117,39 @@ export function initAudio() {
     return new AudioListener();
 }
 
-let audioListener = initAudio();
-let sound = new Audio(audioListener);
-let audioLoader = new AudioLoader();
-
 export function bgMusic() {
-    audioLoader.load(BG_MUSIC_PATH, function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(false);
-        sound.setVolume(0.5);
-        sound.play();
-    });
+    let sound = new Audio(audioListener);
+
+    sound.setBuffer(BG_AUDIO);
+    sound.setLoop(false);
+    sound.setVolume(0.5);
+    sound.play()
 }
 
 export function painSound() {
-    audioLoader.load(PAIN_SOUND_PATH, function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(false);
-        sound.setVolume(0.5);
-        sound.play();
-    });
+    let sound = new Audio(audioListener);
+
+    sound.setBuffer(PAIN_AUDIO);
+    sound.setLoop(false);
+    sound.setVolume(0.5);
+    sound.play()
 }
 
 export function coinSound() {
-    audioLoader.load(COIN_SOUND_PATH, function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(false);
-        sound.setVolume(0.5);
-        sound.play();
-    });
+    let sound = new Audio(audioListener);
+
+    sound.setBuffer(COIN_AUDIO);
+    sound.setLoop(false);
+    sound.setVolume(0.5);
+    sound.play()
+}
+
+export function fireSound() {
+    let sound = new Audio(audioListener);
+
+    sound.setBuffer(FIRE_AUDIO);
+    sound.setLoop(false);
+    sound.setVolume(0.5);
+    sound.play()
 }
 /* ------------------------------------------------------------------------------------------- */
