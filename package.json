@@ -1,10 +1,23 @@
 {
+  "name": "426-fp",
+  "private": true,
+  "version": "0.0.0",
+  "homepage": "https://cuurl.github.io/426-fp/",
+  "type": "module",
   "dependencies": {
     "cannon-es": "^0.20.0",
     "dat.gui": "^0.7.9",
     "three": "^0.171.0"
   },
   "devDependencies": {
-    "vite": "^6.0.1"
+    "vite": "^6.0.1",
+    "vite-plugin-top-level-await": "^1.4.4"
+  },
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "build": "vite build"
   }
 }
