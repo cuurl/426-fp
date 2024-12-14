@@ -25,7 +25,7 @@ export default defineConfig({
             },
             output: {
                 entryFileNames: `assets/[name].js`,
-                chunkFileNames: `assets/[name].js`,http://localhost:4173/426-fp/
+                chunkFileNames: `assets/[name].js`,
                 assetFileNames: `assets/[name].[ext]`,
             },
         },
