@@ -58,7 +58,7 @@ class BaseScene {
     currentLane = null; // which lane is the player currently moving on?
     currentLaneIndex = INITIAL_LANE_IDX;
     t = 0.001;
-    tStep = 0.001;
+    tStep = 0.001 / 60;
 
     score = 0;
     gameOver = false;
@@ -216,7 +216,7 @@ class BaseScene {
         // post-processing
         this.composer = new EffectComposer(this.renderer);
 
-        const renderPass = new RenderPixelatedPass(4, this.scene, this.camera);
+        const renderPass = new RenderPixelatedPass(3, this.scene, this.camera);
         const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight)
         );
@@ -404,7 +404,7 @@ class BaseScene {
 
         this.t += this.tStep;
         if (this.t >= 1) {
-            this.t = 0.001;
+            this.t = 0.001 / this.tStep;
         }
 
         this.score++;
